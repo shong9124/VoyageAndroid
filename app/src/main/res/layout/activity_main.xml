@@ -1,0 +1,33 @@
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <TextView
+            android:id="@+id/day_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/calendarView"
+            android:layout_marginBottom="138dp"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/btn_add_schedule"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/day_text"
+            android:layout_marginTop="581dp"
+            android:layout_marginBottom="0dp"
+            android:text="+" />
+
+    </RelativeLayout>
