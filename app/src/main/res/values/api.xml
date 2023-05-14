@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="API_BASE_URL">http://13.209.38.50:8080/api</string>
+    <string name="API_PERSONAL_BASE_URL">http://13.209.38.50:8080/api/personal</string>
+    <string name="API_PERSONAL_SCHEDULE_BASE_URL">http://13.209.38.50:8080/api/personal/schedule</string>
+</resources>
