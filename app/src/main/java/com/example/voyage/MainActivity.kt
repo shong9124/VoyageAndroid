@@ -1,8 +1,10 @@
 package com.example.voyage
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.CalendarView
 import android.widget.TextView
 import org.json.JSONObject
@@ -40,6 +42,17 @@ class MainActivity : AppCompatActivity() {
             dayText.text = day
         }
 
+        //화면 변환
+        val add: Button = findViewById(R.id.btn_add)
+        add.setOnClickListener{
+            val intent = Intent(this, AddScheduleScreen :: class.java)
+            startActivity(intent)
+        }
+
+//        if(intent.hasExtra("addSchedule")) {
+//            var schedule: TextView = findViewById(R.id.schedule)
+//            schedule.text = intent.getStringExtra("addSchedule")
+//        }
     }
 
     inner class CallApiThread : Thread() {
