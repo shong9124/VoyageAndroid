@@ -8,6 +8,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TimePicker
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class AddScheduleScreen : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -17,11 +19,11 @@ class AddScheduleScreen : AppCompatActivity() {
 
         //객체 생성
         val submitSchedule: Button = findViewById(R.id.btn_send_schedule)
-        var title: EditText = findViewById(R.id.title_edt)
-        var content: EditText = findViewById(R.id.content_edt)
-        var memo: EditText = findViewById(R.id.memo_edt)
-        var endAt: TimePicker = findViewById(R.id.tp_endAt)
-        var tv_endAt: TextView = findViewById(R.id.tv_endAt)
+        val title: EditText = findViewById(R.id.title_edt)
+        val content: EditText = findViewById(R.id.content_edt)
+        val memo: EditText = findViewById(R.id.memo_edt)
+        val endAt: TimePicker = findViewById(R.id.tp_endAt)
+        val tv_endAt: TextView = findViewById(R.id.tv_endAt)
 
         //timePicker 값 변경 이벤트
         endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
@@ -29,10 +31,6 @@ class AddScheduleScreen : AppCompatActivity() {
             tv_endAt.text = time
         }
 
-        //일정 추가
-        var add_schedule = arrayListOf(
-            AddSchedule(title, content, memo, endAt)
-        )
 
         //화면 전환
         submitSchedule.setOnClickListener {

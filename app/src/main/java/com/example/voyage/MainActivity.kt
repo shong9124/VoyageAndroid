@@ -1,12 +1,17 @@
 package com.example.voyage
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.TimePicker
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -16,6 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,6 +54,22 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddScheduleScreen :: class.java)
             startActivity(intent)
         }
+
+        //일정 관련 객체
+        val title: EditText = findViewById(R.id.title_edt)
+        val content: EditText = findViewById(R.id.content_edt)
+        val memo: EditText = findViewById(R.id.memo_edt)
+        val endAt: TimePicker = findViewById(R.id.tp_endAt)
+        val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
+
+
+        //일정 추가
+        var add_schedule = arrayListOf(
+            AddSchedule(title, content, memo)
+        )
+        rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        rv_schedule.setHasFixedSize(true)
+        rv_schedule.adapter = MainRvAdapter(add_schedule)
 
 //        if(intent.hasExtra("addSchedule")) {
 //            var schedule: TextView = findViewById(R.id.schedule)
