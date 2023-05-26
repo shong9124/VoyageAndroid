@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         //일정 추가
         if(title != null && content != null && memo != null) {
             var add_schedule = arrayListOf(
-                AddSchedule(title, content, memo)
+                AddSchedule(title.text.toString(), content.text.toString(), memo.text.toString())
             )
             rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             rv_schedule.setHasFixedSize(true)

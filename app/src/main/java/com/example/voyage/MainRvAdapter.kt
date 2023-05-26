@@ -16,9 +16,9 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: MainRvAdapter.CustomViewHolder, position: Int) {
-        holder.title.text = add_schedule.get(position).title.toString()
-        holder.content.text = add_schedule.get(position).content.toString()
-        holder.memo.text = add_schedule.get(position).memo.toString()
+        holder.title.text = add_schedule.get(position).title
+        holder.content.text = add_schedule.get(position).content
+        holder.memo.text = add_schedule.get(position).memo
 //        holder.endAt = add_schedule.get(position).endAt
     }
 
@@ -27,9 +27,9 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
     }
 
     class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var title = itemView.findViewById<TextView>(R.id.title_edt)
-        var content = itemView.findViewById<TextView>(R.id.content_edt)
-        var memo = itemView.findViewById<TextView>(R.id.memo_edt)
+        var title = itemView.findViewById<TextView>(R.id.tv_title)
+        var content = itemView.findViewById<TextView>(R.id.tv_content)
+        var memo = itemView.findViewById<TextView>(R.id.tv_memo)
 //        var endAt = itemView.findViewById<TimePicker>(R.id.tp_endAt)
     }
 
