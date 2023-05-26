@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
@@ -56,25 +57,32 @@ class MainActivity : AppCompatActivity() {
         }
 
         //일정 관련 객체
-        val title: EditText = findViewById(R.id.title_edt)
-        val content: EditText = findViewById(R.id.content_edt)
-        val memo: EditText = findViewById(R.id.memo_edt)
-        val endAt: TimePicker = findViewById(R.id.tp_endAt)
+        var title: EditText? = findViewById(R.id.title_edt)
+        var content: EditText? = findViewById(R.id.content_edt)
+        var memo: EditText? = findViewById(R.id.memo_edt)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
+        //null exception 해결
+//        if(title.getText().toString().length == 0) {
+//            title.setText("There's no event")
+//        }
+//        if(content.getText().toString().length == 0) {
+//            content.setText("No content")
+//        }
+//        if(memo.getText().toString().length == 0) {
+//            memo.setText("No memo")
+//        }
 
         //일정 추가
-        var add_schedule = arrayListOf(
-            AddSchedule(title, content, memo)
-        )
-        rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        rv_schedule.setHasFixedSize(true)
-        rv_schedule.adapter = MainRvAdapter(add_schedule)
+        if(title != null && content != null && memo != null) {
+            var add_schedule = arrayListOf(
+                AddSchedule(title, content, memo)
+            )
+            rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            rv_schedule.setHasFixedSize(true)
+            rv_schedule.adapter = MainRvAdapter(add_schedule)
+        }
 
-//        if(intent.hasExtra("addSchedule")) {
-//            var schedule: TextView = findViewById(R.id.schedule)
-//            schedule.text = intent.getStringExtra("addSchedule")
-//        }
     }
 
     inner class CallApiThread : Thread() {
