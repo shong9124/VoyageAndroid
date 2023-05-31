@@ -19,6 +19,8 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.Month
+import java.time.Year
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         //CalendarView 날짜 변환 이벤트
         calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
             CallApiThread().start()
+            dateChange(year, month, dayOfMonth)
             //날짜 변수에 담기
             var day: String = "${year}년 ${month + 1}월 ${dayOfMonth}일"
             //변수 텍스트뷰에 담기
@@ -85,9 +88,17 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    inner class dateChange(year: Int, month: Int, dayOfMonth: Int) {
+        var cDay: String = "${year}년 ${month + 1}월 ${dayOfMonth}일"
+
+        inner class InnerDateChange {
+            fun ChangeDate() = cDay
+        }
+    }
+
     inner class CallApiThread : Thread() {
         override fun run() {
-            val testDate = "2023-03-29"
+            val testDate = MainActivity().dateChange().InnerDateChange().ChangeDate()
             val testUserId = "64240be120a07443f9de31f7"
 
             val url =
