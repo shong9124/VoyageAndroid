@@ -22,14 +22,14 @@ class AddScheduleScreen : AppCompatActivity() {
         var title: EditText = findViewById(R.id.title_edt)
         var content: EditText = findViewById(R.id.content_edt)
         var memo: EditText = findViewById(R.id.memo_edt)
-        var endAt: TimePicker = findViewById(R.id.tp_endAt)
+//        var endAt: TimePicker = findViewById(R.id.tp_endAt)
 //        var tv_endAt: TextView = findViewById(R.id.tv_endAt)
 
         //timePicker 값 변경 이벤트
-        endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
-            var time: String = "${hourOfDay}시 ${minute}분"
-//            tv_endAt.text = time
-        }
+//        endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
+//            var time: String = "${hourOfDay}시 ${minute}분"
+////            tv_endAt.text = time
+//        }
 
         //화면 전환
         submitSchedule.setOnClickListener {

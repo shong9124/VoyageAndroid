@@ -16,14 +16,14 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: MainRvAdapter.CustomViewHolder, position: Int) {
-        holder.title.text = add_schedule.get(position).title
-        holder.content.text = add_schedule.get(position).content
-        holder.memo.text = add_schedule.get(position).memo
+        holder.title.text = add_schedule[position].title
+        holder.content.text = add_schedule[position].content
+        holder.memo.text = add_schedule[position].memo
 //        holder.endAt = add_schedule.get(position).endAt
     }
 
     override fun getItemCount(): Int {
-        return add_schedule.size
+        return add_schedule.count()
     }
 
     class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

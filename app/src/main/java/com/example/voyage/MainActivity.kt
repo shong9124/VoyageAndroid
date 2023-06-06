@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         //CalendarView 날짜 변환 이벤트
         calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
             CallApiThread().start()
-            dateChange(year, month, dayOfMonth)
             //날짜 변수에 담기
             var day: String = "${year}년 ${month + 1}월 ${dayOfMonth}일"
             //변수 텍스트뷰에 담기
@@ -66,8 +65,10 @@ class MainActivity : AppCompatActivity() {
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
         //null exception 해결
-//        if(title.getText().toString().length == 0) {
-//            title.setText("There's no event")
+//        if (title != null) {
+//            if(title.getText().toString().length == 0) {
+//                title.setText("There's no event")
+//            }
 //        }
 //        if(content.getText().toString().length == 0) {
 //            content.setText("No content")
@@ -77,28 +78,34 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         //일정 추가
-        if(title != null && content != null && memo != null) {
-            var add_schedule = arrayListOf(
-                AddSchedule(title.text.toString(), content.text.toString(), memo.text.toString())
-            )
-            rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-            rv_schedule.setHasFixedSize(true)
-            rv_schedule.adapter = MainRvAdapter(add_schedule)
-        }
+        var scheduleList = ArrayList<AddSchedule>()
 
-    }
+        scheduleList.add(AddSchedule(title.toString(), content.toString(), memo.toString()))
 
-    inner class dateChange(year: Int, month: Int, dayOfMonth: Int) {
-        var cDay: String = "${year}년 ${month + 1}월 ${dayOfMonth}일"
+        val rv_adapter = MainRvAdapter(scheduleList)
+        rv_adapter.notifyDataSetChanged()
+        rv_schedule.adapter = rv_adapter
+        rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        inner class InnerDateChange {
-            fun ChangeDate() = cDay
-        }
+
+//        if(title != null && content != null && memo != null) {
+//            var add_schedule = arrayListOf(
+//                AddSchedule(title.text.toString(), content.text.toString(), memo.text.toString())
+//            )
+//            rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+//            rv_schedule.setHasFixedSize(true)
+//            rv_schedule.adapter = MainRvAdapter(add_schedule)
+//        }
+
     }
 
     inner class CallApiThread : Thread() {
+
         override fun run() {
-            val testDate = MainActivity().dateChange().InnerDateChange().ChangeDate()
+            var testDate = "2023-05-29"
+//                calendarView.setOnDateChangeListener{ calendarView, year, month, dayOfMonth ->
+//                "${year}-${month + 1}-${dayOfMonth}"
+//            }
             val testUserId = "64240be120a07443f9de31f7"
 
             val url =
