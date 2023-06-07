@@ -14,6 +14,7 @@ import android.widget.TimePicker
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
+import org.w3c.dom.Text
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
@@ -24,6 +25,9 @@ import java.time.Year
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    val REQUEST_CODE = 200
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         val add: Button = findViewById(R.id.btn_add)
         add.setOnClickListener{
             val intent = Intent(this, AddScheduleScreen :: class.java)
-            startActivity(intent)
+            startActivityForResult(intent, REQUEST_CODE)
         }
 
         //일정 관련 객체
@@ -97,6 +101,29 @@ class MainActivity : AppCompatActivity() {
 //            rv_schedule.adapter = MainRvAdapter(add_schedule)
 //        }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        var title_tv = findViewById<TextView>(R.id.tv_title)
+        var content_tv = findViewById<TextView>(R.id.tv_content)
+        var memo_tv = findViewById<TextView>(R.id.tv_memo)
+
+        if (requestCode == REQUEST_CODE){
+
+            if (resultCode == RESULT_OK) {
+
+                var getTitle = data?.getStringExtra("title")
+                var getContent = data?.getStringExtra("content")
+                var getMemo = data?.getStringExtra("memo")
+
+                title_tv.text = getTitle
+                content_tv.text = getContent
+                memo_tv.text = getMemo
+
+            }
+        }
     }
 
     inner class CallApiThread : Thread() {

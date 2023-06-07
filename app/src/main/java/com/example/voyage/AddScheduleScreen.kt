@@ -34,7 +34,10 @@ class AddScheduleScreen : AppCompatActivity() {
         //화면 전환
         submitSchedule.setOnClickListener {
             val intent = Intent(this, MainActivity :: class.java)
-            startActivity(intent)
+            intent.putExtra("title", title.text.toString())
+            intent.putExtra("content", content.text.toString())
+            intent.putExtra("memo", memo.text.toString())
+            setResult(RESULT_OK, intent)
         }
     }
 }
