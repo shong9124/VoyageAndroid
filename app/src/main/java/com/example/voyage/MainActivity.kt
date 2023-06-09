@@ -1,6 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.voyage
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
             CallApiThread().start()
             //날짜 변수에 담기
-            var day: String = "${year}년 ${month + 1}월 ${dayOfMonth}일"
+            var day: String = "${year}-${month + 1}-${dayOfMonth}"
             //변수 텍스트뷰에 담기
             dayText.text = day
         }
@@ -110,20 +113,23 @@ class MainActivity : AppCompatActivity() {
         var content_tv = findViewById<TextView>(R.id.tv_content)
         var memo_tv = findViewById<TextView>(R.id.tv_memo)
 
-        if (requestCode == REQUEST_CODE){
+        if (resultCode == Activity.RESULT_OK) {
 
-            if (resultCode == RESULT_OK) {
+            Log.d("MDM", "In onActivityResult")
 
-                var getTitle = data?.getStringExtra("title")
-                var getContent = data?.getStringExtra("content")
-                var getMemo = data?.getStringExtra("memo")
+            when(requestCode) {
+                REQUEST_CODE -> {
+                    var getTitle = data?.getStringExtra("title")
+                    var getContent = data?.getStringExtra("content")
+                    var getMemo = data?.getStringExtra("memo")
 
-                title_tv.text = getTitle
-                content_tv.text = getContent
-                memo_tv.text = getMemo
-
+                    title_tv.text = getTitle
+                    content_tv.text = getContent
+                    memo_tv.text = getMemo
+                }
             }
         }
+
     }
 
     inner class CallApiThread : Thread() {

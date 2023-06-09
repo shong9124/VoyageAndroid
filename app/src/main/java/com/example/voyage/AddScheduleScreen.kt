@@ -1,6 +1,7 @@
 package com.example.voyage
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -33,11 +34,12 @@ class AddScheduleScreen : AppCompatActivity() {
 
         //화면 전환
         submitSchedule.setOnClickListener {
-            val intent = Intent(this, MainActivity :: class.java)
+            val intent = Intent()//this, MainActivity :: class.java)
             intent.putExtra("title", title.text.toString())
             intent.putExtra("content", content.text.toString())
             intent.putExtra("memo", memo.text.toString())
-            setResult(RESULT_OK, intent)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
         }
     }
 }
