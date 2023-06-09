@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         val calendarView: CalendarView = findViewById(R.id.calendarView)
 
         //날짜 형태
-        val dateFormat: DateFormat = SimpleDateFormat("yyyy년 MM월 dd일")
+        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
 
         //date 타입(오늘 날짜)
         val date: Date = Date(calendarView.date)
@@ -58,51 +58,29 @@ class MainActivity : AppCompatActivity() {
             dayText.text = day
         }
 
-        //화면 변환
-        val add: Button = findViewById(R.id.btn_add)
-        add.setOnClickListener{
-            val intent = Intent(this, AddScheduleScreen :: class.java)
-            startActivityForResult(intent, REQUEST_CODE)
-        }
-
         //일정 관련 객체
         var title: EditText? = findViewById(R.id.title_edt)
         var content: EditText? = findViewById(R.id.content_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
-        //null exception 해결
-//        if (title != null) {
-//            if(title.getText().toString().length == 0) {
-//                title.setText("There's no event")
-//            }
-//        }
-//        if(content.getText().toString().length == 0) {
-//            content.setText("No content")
-//        }
-//        if(memo.getText().toString().length == 0) {
-//            memo.setText("No memo")
-//        }
+        //화면 변환
+        val add: Button = findViewById(R.id.btn_add)
+        add.setOnClickListener{
+            val intent = Intent(this, AddScheduleScreen :: class.java)
 
-        //일정 추가
-        var scheduleList = ArrayList<AddSchedule>()
+            //일정 추가
+            var scheduleList = ArrayList<AddSchedule>()
 
-        scheduleList.add(AddSchedule(title.toString(), content.toString(), memo.toString()))
+            scheduleList.add(AddSchedule(title.toString(), content.toString(), memo.toString()))
 
-        val rv_adapter = MainRvAdapter(scheduleList)
-        rv_adapter.notifyDataSetChanged()
-        rv_schedule.adapter = rv_adapter
-        rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            val rv_adapter = MainRvAdapter(scheduleList)
+            rv_adapter.notifyDataSetChanged()
+            rv_schedule.adapter = rv_adapter
+            rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-
-//        if(title != null && content != null && memo != null) {
-//            var add_schedule = arrayListOf(
-//                AddSchedule(title.text.toString(), content.text.toString(), memo.text.toString())
-//            )
-//            rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-//            rv_schedule.setHasFixedSize(true)
-//            rv_schedule.adapter = MainRvAdapter(add_schedule)
-//        }
+            startActivityForResult(intent, REQUEST_CODE)
+        }
 
     }
 
