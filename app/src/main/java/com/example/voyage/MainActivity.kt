@@ -63,6 +63,8 @@ class MainActivity : AppCompatActivity() {
         var content: EditText? = findViewById(R.id.content_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
+        var scheduleList = ArrayList<AddSchedule>()
+
 
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
@@ -70,8 +72,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddScheduleScreen :: class.java)
 
             //일정 추가
-            var scheduleList = ArrayList<AddSchedule>()
-
             scheduleList.add(AddSchedule(title.toString(), content.toString(), memo.toString()))
 
             val rv_adapter = MainRvAdapter(scheduleList)
