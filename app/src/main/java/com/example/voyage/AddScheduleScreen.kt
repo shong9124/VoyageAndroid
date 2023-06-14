@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.TimePicker
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.ArrayList
 
 class AddScheduleScreen : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -38,6 +39,7 @@ class AddScheduleScreen : AppCompatActivity() {
             intent.putExtra("title", title.text.toString())
             intent.putExtra("content", content.text.toString())
             intent.putExtra("memo", memo.text.toString())
+
             setResult(Activity.RESULT_OK, intent)
             finish()
         }

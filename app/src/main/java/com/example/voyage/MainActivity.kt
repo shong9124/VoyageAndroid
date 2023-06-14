@@ -30,6 +30,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     val REQUEST_CODE = 200
+    var scheduleList = ArrayList<AddSchedule>()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +64,6 @@ class MainActivity : AppCompatActivity() {
         var content: EditText? = findViewById(R.id.content_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
-        var scheduleList = ArrayList<AddSchedule>()
 
 
         //화면 변환
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             scheduleList.add(AddSchedule(title.toString(), content.toString(), memo.toString()))
 
             val rv_adapter = MainRvAdapter(scheduleList)
-            rv_adapter.notifyDataSetChanged()
+            rv_adapter.notifyDataSetChanged()   //전체 새로고침
             rv_schedule.adapter = rv_adapter
             rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
@@ -97,13 +97,22 @@ class MainActivity : AppCompatActivity() {
 
             when(requestCode) {
                 REQUEST_CODE -> {
+
+                    //받아온 editText 값들의 text를 추출해서 get어쩌고에 다 넣어줌
                     var getTitle = data?.getStringExtra("title")
                     var getContent = data?.getStringExtra("content")
                     var getMemo = data?.getStringExtra("memo")
 
+                    //get어쩌고들의 문자열을 각각의 textview의 text에 넣어줌
                     title_tv.text = getTitle
                     content_tv.text = getContent
                     memo_tv.text = getMemo
+
+                    //도대체 뭐가 불만이니...
+                    scheduleList[scheduleList.size - 1].title = title_tv.text.toString()
+                    scheduleList[scheduleList.size - 1].content = content_tv.text.toString()
+                    scheduleList[scheduleList.size - 1].memo = memo_tv.text.toString()
+
                 }
             }
         }
@@ -114,9 +123,6 @@ class MainActivity : AppCompatActivity() {
 
         override fun run() {
             var testDate = "2023-05-29"
-//                calendarView.setOnDateChangeListener{ calendarView, year, month, dayOfMonth ->
-//                "${year}-${month + 1}-${dayOfMonth}"
-//            }
             val testUserId = "64240be120a07443f9de31f7"
 
             val url =
