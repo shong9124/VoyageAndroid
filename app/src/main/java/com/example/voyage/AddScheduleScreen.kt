@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -14,6 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.ArrayList
 
 class AddScheduleScreen : AppCompatActivity() {
+
+    var scheduleList = ArrayList<AddSchedule>()
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,9 +25,9 @@ class AddScheduleScreen : AppCompatActivity() {
 
         //객체 생성
         val submitSchedule: Button = findViewById(R.id.btn_send_schedule)
-        var title: EditText = findViewById(R.id.title_edt)
-        var content: EditText = findViewById(R.id.content_edt)
-        var memo: EditText = findViewById(R.id.memo_edt)
+        var title: EditText? = findViewById(R.id.title_edt)
+        var content: EditText? = findViewById(R.id.content_edt)
+        var memo: EditText? = findViewById(R.id.memo_edt)
 //        var endAt: TimePicker = findViewById(R.id.tp_endAt)
 //        var tv_endAt: TextView = findViewById(R.id.tv_endAt)
 
@@ -36,9 +40,12 @@ class AddScheduleScreen : AppCompatActivity() {
         //화면 전환
         submitSchedule.setOnClickListener {
             val intent = Intent()//this, MainActivity :: class.java)
-            intent.putExtra("title", title.text.toString())
-            intent.putExtra("content", content.text.toString())
-            intent.putExtra("memo", memo.text.toString())
+            intent.putExtra("title", title?.text.toString())
+            intent.putExtra("content", content?.text.toString())
+            intent.putExtra("memo", memo?.text.toString())
+
+            //정렬... 인데 뭔가 이상함
+            scheduleList.sortByDescending { scheduleList -> scheduleList.title }
 
             setResult(Activity.RESULT_OK, intent)
             finish()

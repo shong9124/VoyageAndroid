@@ -74,10 +74,18 @@ class MainActivity : AppCompatActivity() {
             //일정 추가
             scheduleList.add(AddSchedule(title.toString(), content.toString(), memo.toString()))
 
+            if(scheduleList.size > 0) {
+                Log.d("ASL", "schedule[${scheduleList.size -1}] added successfully")
+            }
+
             val rv_adapter = MainRvAdapter(scheduleList)
             rv_adapter.notifyDataSetChanged()   //전체 새로고침
             rv_schedule.adapter = rv_adapter
-            rv_schedule.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            rv_schedule.layoutManager = LinearLayoutManager(
+                this,
+                LinearLayoutManager.VERTICAL,
+                false,
+            )
 
             startActivityForResult(intent, REQUEST_CODE)
         }
