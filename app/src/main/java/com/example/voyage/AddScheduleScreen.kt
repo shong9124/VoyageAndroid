@@ -16,8 +16,6 @@ import java.util.ArrayList
 
 class AddScheduleScreen : AppCompatActivity() {
 
-    var scheduleList = ArrayList<AddSchedule>()
-
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +42,8 @@ class AddScheduleScreen : AppCompatActivity() {
             intent.putExtra("content", content?.text.toString())
             intent.putExtra("memo", memo?.text.toString())
 
-            //정렬... 인데 뭔가 이상함
-            scheduleList.sortByDescending { scheduleList -> scheduleList.title }
-
             setResult(Activity.RESULT_OK, intent)
+
             finish()
         }
     }

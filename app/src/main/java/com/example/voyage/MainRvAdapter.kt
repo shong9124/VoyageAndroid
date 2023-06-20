@@ -1,6 +1,7 @@
 package com.example.voyage
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,9 +17,9 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: MainRvAdapter.CustomViewHolder, position: Int) {
-        holder.title.text = add_schedule[position].title
-        holder.content.text = add_schedule[position].content
-        holder.memo.text = add_schedule[position].memo
+        holder.title_tv.text = add_schedule[position].title
+        holder.content_tv.text = add_schedule[position].content
+        holder.memo_tv.text = add_schedule[position].memo
 //        holder.endAt = add_schedule.get(position).endAt
     }
 
@@ -27,9 +28,9 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
     }
 
     class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var title = itemView.findViewById<TextView>(R.id.tv_title)
-        var content = itemView.findViewById<TextView>(R.id.tv_content)
-        var memo = itemView.findViewById<TextView>(R.id.tv_memo)
+        var title_tv = itemView.findViewById<TextView>(R.id.tv_title)
+        var content_tv = itemView.findViewById<TextView>(R.id.tv_content)
+        var memo_tv = itemView.findViewById<TextView>(R.id.tv_memo)
 //        var endAt = itemView.findViewById<TimePicker>(R.id.tp_endAt)
     }
 

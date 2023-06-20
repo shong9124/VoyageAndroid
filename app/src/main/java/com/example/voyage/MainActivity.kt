@@ -65,6 +65,8 @@ class MainActivity : AppCompatActivity() {
         var memo: EditText? = findViewById(R.id.memo_edt)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
+        //정렬... 인데 일단 제목 기준으로 정렬
+        //scheduleList.sortByDescending { scheduleList -> scheduleList.title }
 
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
@@ -72,36 +74,28 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddScheduleScreen :: class.java)
 
             //일정 추가
-            scheduleList.add(AddSchedule(title.toString(), content.toString(), memo.toString()))
-
-            if(scheduleList.size > 0) {
-                Log.d("ASL", "schedule[${scheduleList.size -1}] added successfully")
-            }
+            scheduleList.add(AddSchedule(title?.text.toString(), content?.text.toString(), memo?.text.toString()))
 
             val rv_adapter = MainRvAdapter(scheduleList)
-            rv_adapter.notifyDataSetChanged()   //전체 새로고침
             rv_schedule.adapter = rv_adapter
             rv_schedule.layoutManager = LinearLayoutManager(
-                this,
-                LinearLayoutManager.VERTICAL,
-                false,
-            )
+                this, LinearLayoutManager.VERTICAL, false)
+
+            rv_adapter.notifyDataSetChanged()   //전체 새로고침
 
             startActivityForResult(intent, REQUEST_CODE)
         }
 
     }
 
+    //화면 전환할 때 데이터 넘겨주는 함수..
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        var title_tv = findViewById<TextView>(R.id.tv_title)
-        var content_tv = findViewById<TextView>(R.id.tv_content)
-        var memo_tv = findViewById<TextView>(R.id.tv_memo)
 
         if (resultCode == Activity.RESULT_OK) {
 
             Log.d("MDM", "In onActivityResult")
+            Log.d("ASL", "${scheduleList}")
 
             when(requestCode) {
                 REQUEST_CODE -> {
@@ -112,14 +106,14 @@ class MainActivity : AppCompatActivity() {
                     var getMemo = data?.getStringExtra("memo")
 
                     //get어쩌고들의 문자열을 각각의 textview의 text에 넣어줌
-                    title_tv.text = getTitle
-                    content_tv.text = getContent
-                    memo_tv.text = getMemo
+//                    title_tv.text = getTitle
+//                    content_tv.text = getContent
+//                    memo_tv.text = getMemo
 
                     //도대체 뭐가 불만이니...
-                    scheduleList[scheduleList.size - 1].title = title_tv.text.toString()
-                    scheduleList[scheduleList.size - 1].content = content_tv.text.toString()
-                    scheduleList[scheduleList.size - 1].memo = memo_tv.text.toString()
+                    scheduleList[scheduleList.size - 1].title = getTitle.toString()
+                    scheduleList[scheduleList.size - 1].content = getContent.toString()
+                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
 
                 }
             }
