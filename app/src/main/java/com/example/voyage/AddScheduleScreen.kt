@@ -28,6 +28,7 @@ class AddScheduleScreen : AppCompatActivity() {
         var memo: EditText? = findViewById(R.id.memo_edt)
 //        var endAt: TimePicker = findViewById(R.id.tp_endAt)
 //        var tv_endAt: TextView = findViewById(R.id.tv_endAt)
+        var scheduleList = MainActivity().scheduleList
 
         //timePicker 값 변경 이벤트
 //        endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
@@ -41,6 +42,8 @@ class AddScheduleScreen : AppCompatActivity() {
             intent.putExtra("title", title?.text.toString())
             intent.putExtra("content", content?.text.toString())
             intent.putExtra("memo", memo?.text.toString())
+
+            val rv_adapter = MainRvAdapter(scheduleList)
 
             setResult(Activity.RESULT_OK, intent)
 

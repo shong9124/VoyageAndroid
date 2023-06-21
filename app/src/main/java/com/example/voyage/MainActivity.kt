@@ -65,11 +65,9 @@ class MainActivity : AppCompatActivity() {
         var memo: EditText? = findViewById(R.id.memo_edt)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
-        //정렬... 인데 일단 제목 기준으로 정렬
-        //scheduleList.sortByDescending { scheduleList -> scheduleList.title }
-
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
+
         add.setOnClickListener{
             val intent = Intent(this, AddScheduleScreen :: class.java)
 
@@ -82,6 +80,9 @@ class MainActivity : AppCompatActivity() {
                 this, LinearLayoutManager.VERTICAL, false)
 
             rv_adapter.notifyDataSetChanged()   //전체 새로고침
+
+//            var position = scheduleList.size - 1
+//            rv_adapter.notifyItemChanged(position)
 
             startActivityForResult(intent, REQUEST_CODE)
         }
