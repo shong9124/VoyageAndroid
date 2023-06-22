@@ -20,7 +20,7 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
         holder.title_tv.text = add_schedule[position].title
         holder.content_tv.text = add_schedule[position].content
         holder.memo_tv.text = add_schedule[position].memo
-//        holder.endAt = add_schedule.get(position).endAt
+        holder.endAt_tv.text = add_schedule[position].endTime
     }
 
     override fun getItemCount(): Int {
@@ -31,7 +31,7 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
         var title_tv = itemView.findViewById<TextView>(R.id.tv_title)
         var content_tv = itemView.findViewById<TextView>(R.id.tv_content)
         var memo_tv = itemView.findViewById<TextView>(R.id.tv_memo)
-//        var endAt = itemView.findViewById<TimePicker>(R.id.tp_endAt)
+        var endAt_tv = itemView.findViewById<TextView>(R.id.tv_endAt)
     }
 
 }

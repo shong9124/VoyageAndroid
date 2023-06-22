@@ -37,12 +37,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //객체 생성
+        //날짜 관련 객체 생성
         val dayText: TextView = findViewById(R.id.day_text)
         val calendarView: CalendarView = findViewById(R.id.calendarView)
 
         //날짜 형태
-        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val dateFormat: DateFormat = SimpleDateFormat("yyyy-M-dd")
 
         //date 타입(오늘 날짜)
         val date: Date = Date(calendarView.date)
@@ -59,10 +59,12 @@ class MainActivity : AppCompatActivity() {
             dayText.text = day
         }
 
-        //일정 관련 객체
+        //일정 추가 관련 객체
         var title: EditText? = findViewById(R.id.title_edt)
         var content: EditText? = findViewById(R.id.content_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
+        var tv_endAt: TextView? = findViewById(R.id.tv_endAt)
+
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
         //화면 변환
@@ -72,7 +74,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddScheduleScreen :: class.java)
 
             //일정 추가
-            scheduleList.add(AddSchedule(title?.text.toString(), content?.text.toString(), memo?.text.toString()))
+            scheduleList.add(AddSchedule(
+                title?.text.toString(),
+                content?.text.toString(),
+                memo?.text.toString(),
+                tv_endAt?.text.toString()
+            ))
 
             val rv_adapter = MainRvAdapter(scheduleList)
             rv_schedule.adapter = rv_adapter
@@ -89,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    //화면 전환할 때 데이터 넘겨주는 함수..
+    //화면 전환할 때 데이터 받아오는 함수..
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -105,6 +112,7 @@ class MainActivity : AppCompatActivity() {
                     var getTitle = data?.getStringExtra("title")
                     var getContent = data?.getStringExtra("content")
                     var getMemo = data?.getStringExtra("memo")
+                    var getEndTime = data?.getStringExtra("endTime")
 
                     //get어쩌고들의 문자열을 각각의 textview의 text에 넣어줌
 //                    title_tv.text = getTitle
@@ -115,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                     scheduleList[scheduleList.size - 1].title = getTitle.toString()
                     scheduleList[scheduleList.size - 1].content = getContent.toString()
                     scheduleList[scheduleList.size - 1].memo = getMemo.toString()
+                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
 
                 }
             }

@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.TimePicker
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.time.LocalDateTime
 import java.util.ArrayList
 
 class AddScheduleScreen : AppCompatActivity() {
@@ -26,15 +27,18 @@ class AddScheduleScreen : AppCompatActivity() {
         var title: EditText? = findViewById(R.id.title_edt)
         var content: EditText? = findViewById(R.id.content_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
-//        var endAt: TimePicker = findViewById(R.id.tp_endAt)
-//        var tv_endAt: TextView = findViewById(R.id.tv_endAt)
+
+        //timePicker 관련 객체
+        var endAt: TimePicker = findViewById(R.id.tp_endAt)
+        var endTime: String = ""
+
+        //MainActivity의 scheduleList 호출
         var scheduleList = MainActivity().scheduleList
 
         //timePicker 값 변경 이벤트
-//        endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
-//            var time: String = "${hourOfDay}시 ${minute}분"
-////            tv_endAt.text = time
-//        }
+        endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
+            endTime = "End event at ${hourOfDay} : ${minute}"
+        }
 
         //화면 전환
         submitSchedule.setOnClickListener {
@@ -42,8 +46,9 @@ class AddScheduleScreen : AppCompatActivity() {
             intent.putExtra("title", title?.text.toString())
             intent.putExtra("content", content?.text.toString())
             intent.putExtra("memo", memo?.text.toString())
+            intent.putExtra("endTime", endTime)
 
-            val rv_adapter = MainRvAdapter(scheduleList)
+//            val rv_adapter = MainRvAdapter(scheduleList)
 
             setResult(Activity.RESULT_OK, intent)
 
