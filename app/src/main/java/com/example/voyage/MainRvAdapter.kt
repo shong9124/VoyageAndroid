@@ -23,38 +23,19 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
         holder.memo_tv.text = add_schedule[position].memo
         holder.endAt_tv.text = add_schedule[position].endTime
 
-        val itemList = add_schedule[position]
-
-        holder.itemView.setOnClickListener {
-            itemClickListener.onClick(it, position)
+        holder.itemView.setOnClickListener{
+            Log.d("OCL", "schedule[${position}] clicked")
         }
-        holder.apply {
-            //CustomViewHolder(itemList)  //괄호 안에 나는 view가 들어가야하는데...
-            //bind는 괄호 안에 AddSchedule이 들어가는거임
-            //이거 진자 방법 없으면 bind 써서 싹 고쳐야함
-        }
-
     }
 
     override fun getItemCount(): Int {
         return add_schedule.count()
     }
 
-    class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var title_tv = itemView.findViewById<TextView>(R.id.tv_title)
         var content_tv = itemView.findViewById<TextView>(R.id.tv_content)
         var memo_tv = itemView.findViewById<TextView>(R.id.tv_memo)
         var endAt_tv = itemView.findViewById<TextView>(R.id.tv_endAt)
     }
-
-    //ClickListener
-    interface OnItemClickListener {
-        fun onClick(v: View, position: Int)
-    }
-    private lateinit var itemClickListener : OnItemClickListener
-
-    fun setItemClickListener(itemClickListener: OnItemClickListener) {
-        this.itemClickListener = itemClickListener
-    }
-
 }
