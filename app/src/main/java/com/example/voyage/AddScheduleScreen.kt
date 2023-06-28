@@ -32,9 +32,6 @@ class AddScheduleScreen : AppCompatActivity() {
         var endAt: TimePicker = findViewById(R.id.tp_endAt)
         var endTime: String = ""
 
-        //MainActivity의 scheduleList 호출
-        var scheduleList = MainActivity().scheduleList
-
         //timePicker 값 변경 이벤트
         endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
             endTime = "End event at ${hourOfDay} : ${minute}"

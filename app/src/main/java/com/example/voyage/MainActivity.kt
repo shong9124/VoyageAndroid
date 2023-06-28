@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.EditText
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
     val REQUEST_CODE = 200
     var scheduleList = ArrayList<AddSchedule>()
+    val rv_adapter = MainRvAdapter(scheduleList)
+    var s_day : String = ""
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         val calendarView: CalendarView = findViewById(R.id.calendarView)
 
         //날짜 형태
-        val dateFormat: DateFormat = SimpleDateFormat("yyyy-M-dd")
+        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
 
         //date 타입(오늘 날짜)
         val date: Date = Date(calendarView.date)
@@ -52,11 +55,13 @@ class MainActivity : AppCompatActivity() {
 
         //CalendarView 날짜 변환 이벤트
         calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
-            CallApiThread().start()
             //날짜 변수에 담기
-            var day: String = "${year}-${month + 1}-${dayOfMonth}"
+            s_day = "${year}-%02d-${dayOfMonth}".format(month + 1)
             //변수 텍스트뷰에 담기
-            dayText.text = day
+            dayText.text = s_day
+
+            //api 호출
+            CallApiThread().start()
         }
 
         //일정 추가 관련 객체
@@ -64,12 +69,10 @@ class MainActivity : AppCompatActivity() {
         var content: EditText? = findViewById(R.id.content_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
         var tv_endAt: TextView? = findViewById(R.id.tv_endAt)
-
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
-
         add.setOnClickListener{
             val intent = Intent(this, AddScheduleScreen :: class.java)
 
@@ -81,29 +84,22 @@ class MainActivity : AppCompatActivity() {
                 tv_endAt?.text.toString()
             ))
 
-            val rv_adapter = MainRvAdapter(scheduleList)
             rv_schedule.adapter = rv_adapter
             rv_schedule.layoutManager = LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false)
-
-            rv_adapter.notifyDataSetChanged()   //전체 새로고침
-
-//            var position = scheduleList.size - 1
-//            rv_adapter.notifyItemChanged(position)
 
             startActivityForResult(intent, REQUEST_CODE)
         }
 
     }
 
-    //화면 전환할 때 데이터 받아오는 함수..
+    //화면 전환할 때 데이터 받아 오는 함수..
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
 
             Log.d("MDM", "In onActivityResult")
-            Log.d("ASL", "${scheduleList}")
 
             when(requestCode) {
                 REQUEST_CODE -> {
@@ -114,27 +110,43 @@ class MainActivity : AppCompatActivity() {
                     var getMemo = data?.getStringExtra("memo")
                     var getEndTime = data?.getStringExtra("endTime")
 
-                    //get어쩌고들의 문자열을 각각의 textview의 text에 넣어줌
-//                    title_tv.text = getTitle
-//                    content_tv.text = getContent
-//                    memo_tv.text = getMemo
+                    //입력값이 없을 경우
+                    if (getTitle == null) {
+                        var title_tv : TextView = findViewById(R.id.tv_title)
+                        title_tv.visibility = View.INVISIBLE
+                    }
+                    if (getContent == null) {
+                        var content_tv : TextView = findViewById(R.id.tv_content)
+                        content_tv.visibility = View.INVISIBLE
+                    }
+                    if (getMemo == null) {
+                        var memo_tv : TextView = findViewById(R.id.tv_memo)
+                        memo_tv.visibility = View.INVISIBLE
+                    }
+                    //시간 변경값이 없을 경우
+                    if (getEndTime == null) {
+                        var endAt : TextView = findViewById(R.id.tv_endAt)
+                        endAt.visibility = View.INVISIBLE
+                    }
 
-                    //도대체 뭐가 불만이니...
+                    //scheduleList에 각각 넣어줌
                     scheduleList[scheduleList.size - 1].title = getTitle.toString()
                     scheduleList[scheduleList.size - 1].content = getContent.toString()
                     scheduleList[scheduleList.size - 1].memo = getMemo.toString()
                     scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
 
+                    rv_adapter.notifyDataSetChanged()   //전체 새로고침
+                    //확인
+                    Log.d("ASL", "${scheduleList}")
                 }
             }
         }
-
     }
 
     inner class CallApiThread : Thread() {
 
         override fun run() {
-            var testDate = "2023-05-29"
+            var testDate = s_day
             val testUserId = "64240be120a07443f9de31f7"
 
             val url =
