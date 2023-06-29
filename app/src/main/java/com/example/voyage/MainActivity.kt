@@ -5,6 +5,7 @@ package com.example.voyage
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -15,6 +16,7 @@ import android.widget.CalendarView
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TimePicker
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
@@ -143,8 +145,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //api 호출
     inner class CallApiThread : Thread() {
 
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
             var testDate = s_day
             val testUserId = "64240be120a07443f9de31f7"
@@ -168,6 +172,13 @@ class MainActivity : AppCompatActivity() {
             } while (str != null)
 
             val root = JSONObject(buf.toString())
+
+            //error = content 값이 존재하지 않음 문제는 일정을 추가하고도 존재하지 않음..
+            var content = root.getJSONArray("data")
+
+//            if (scheduleList.size > 0) {
+//                content?.append(scheduleList[scheduleList.size - 1].content)
+//            }
 
             Log.d(Companion.TAG, "root: $root")
             Log.d(Companion.TAG, "code: ${root.get("code")}")
