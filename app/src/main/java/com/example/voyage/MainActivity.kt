@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         //CalendarView 날짜 변환 이벤트
         calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
             //날짜 변수에 담기
-            s_day = "${year}-%02d-${dayOfMonth}".format(month + 1)
+            s_day = "${year}-%02d-%02d".format(month + 1, dayOfMonth)
             //변수 텍스트뷰에 담기
             dayText.text = s_day
 
@@ -83,7 +83,8 @@ class MainActivity : AppCompatActivity() {
                 title?.text.toString(),
                 content?.text.toString(),
                 memo?.text.toString(),
-                tv_endAt?.text.toString()
+                tv_endAt?.text.toString(),
+                s_day
             ))
 
             rv_schedule.adapter = rv_adapter
@@ -151,10 +152,20 @@ class MainActivity : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
             var testDate = s_day
+            // 일정이 없을 때
             val testUserId = "64240be120a07443f9de31f7"
+            // 일정을 추가 했을 때
+            val testId = "64241415fa23a26bf8b4d09f"
 
-            val url =
+            // 일정 추가 전
+            var url =
                 URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
+            // 일정을 추가 했을 때
+//            if (scheduleList.size != 0) {
+//                url =
+//                    URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "?personalScheduleId=$testId")
+//            }
+
             val conn = url.openConnection()
             val input = conn.getInputStream()
             val isr = InputStreamReader(input)
@@ -173,16 +184,21 @@ class MainActivity : AppCompatActivity() {
 
             val root = JSONObject(buf.toString())
 
-            //error = content 값이 존재하지 않음 문제는 일정을 추가하고도 존재하지 않음..
-            var content = root.getJSONArray("data")
-
-//            if (scheduleList.size > 0) {
-//                content?.append(scheduleList[scheduleList.size - 1].content)
-//            }
-
             Log.d(Companion.TAG, "root: $root")
             Log.d(Companion.TAG, "code: ${root.get("code")}")
-            Log.d(Companion.TAG, "data: ${root.get("data")}")
+
+            // 일정 추가 했을 때 url을 바꾸는 게 맞는지 모르겠어서 만든...
+            Log.d(Companion.TAG, "data: ${root.put("data", scheduleList)}")
+
+            // 일정이 추가 됐을 때
+//            if (scheduleList.size != 0) {
+//                val data = root.getJSONObject("data")
+//                val id = data.getJSONObject("id")
+//
+//                Log.d(Companion.TAG, "date: ${id.put("date", s_day)}")
+//                Log.d(Companion.TAG, "data: ${data.put("content", "content")}")
+//            }
+
         }
     }
 
