@@ -45,7 +45,7 @@ class AddScheduleScreen : AppCompatActivity() {
             intent.putExtra("memo", memo?.text.toString())
             intent.putExtra("endTime", endTime)
 
-//            val rv_adapter = MainRvAdapter(scheduleList)
+
 
             setResult(Activity.RESULT_OK, intent)
 

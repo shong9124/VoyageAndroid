@@ -21,6 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
 import org.w3c.dom.Text
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
+import retrofit2.http.GET
+import retrofit2.http.Query
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
@@ -152,19 +158,10 @@ class MainActivity : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
             var testDate = s_day
-            // 일정이 없을 때
             val testUserId = "64240be120a07443f9de31f7"
-            // 일정을 추가 했을 때
-            val testId = "64241415fa23a26bf8b4d09f"
 
-            // 일정 추가 전
             var url =
                 URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
-            // 일정을 추가 했을 때
-//            if (scheduleList.size != 0) {
-//                url =
-//                    URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "?personalScheduleId=$testId")
-//            }
 
             val conn = url.openConnection()
             val input = conn.getInputStream()
@@ -186,20 +183,34 @@ class MainActivity : AppCompatActivity() {
 
             Log.d(Companion.TAG, "root: $root")
             Log.d(Companion.TAG, "code: ${root.get("code")}")
-
-            // 일정 추가 했을 때 url을 바꾸는 게 맞는지 모르겠어서 만든...
-            Log.d(Companion.TAG, "data: ${root.put("data", scheduleList)}")
-
-            // 일정이 추가 됐을 때
-//            if (scheduleList.size != 0) {
-//                val data = root.getJSONObject("data")
-//                val id = data.getJSONObject("id")
-//
-//                Log.d(Companion.TAG, "date: ${id.put("date", s_day)}")
-//                Log.d(Companion.TAG, "data: ${data.put("content", "content")}")
-//            }
+            Log.d(Companion.TAG, "data: ${root.get("data")}")
 
         }
+    }
+
+    // 여기서부터는 서버에 데이터 저장하는거 구현
+    // retrofit 설정
+    object RetrofitClass {
+        private val retrofit = Retrofit.Builder()
+            .baseUrl(API_PERSONAL_SCHEDULE_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        private val _api = retrofit.create(testInterface::class.java)
+        // 에러
+//        val api
+//            get() = RetrofitClass.api
+    }
+
+    // 인터페이스
+    interface testInterface {
+        @GET("testResponse")
+        fun getSchedule(@Query("title") title: String,
+        @Query("content") content: String,
+        @Query("memo") memo: String,
+        @Query("end_time") endTime: String,
+        @Query("date") date: String
+        ): Call<testResponse>
     }
 
     companion object {
