@@ -16,12 +16,15 @@ import android.widget.CalendarView
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TimePicker
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
 import org.w3c.dom.Text
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -196,22 +199,38 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        private val _api = retrofit.create(testInterface::class.java)
-        // 에러
-//        val api
-//            get() = RetrofitClass.api
+            private val _api = retrofit.create(testInterface::class.java)
+            // 에러
+                val api
+                get() = _api
     }
 
     // 인터페이스
     interface testInterface {
-        @GET("testResponse")
+        @GET("/endAt?ownerId=64240be120a07443f9de31f7&date=2023-07-12")
         fun getSchedule(@Query("title") title: String,
         @Query("content") content: String,
         @Query("memo") memo: String,
         @Query("end_time") endTime: String,
         @Query("date") date: String
-        ): Call<testResponse>
+        ): Call<TestResponse>
     }
+
+    val callGetSchedule = RetrofitClass.api.getSchedule(
+        "title", "content", "memo", "17:20", s_day)
+
+    callGetSchedule.enqueue(object : Callback<TestResponse> {
+        override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
+            if(response.isSuccessful()) {
+                Log.d("RES", "successfully saved")
+            }
+        }
+
+        override fun onFailure(call: Call<TestResponse>, t: Throwable) {
+            TODO("Not yet implemented")
+        }
+    }
+    )
 
     companion object {
         const val TAG = "DEV"

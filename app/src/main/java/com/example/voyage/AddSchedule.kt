@@ -4,6 +4,8 @@ import android.widget.EditText
 import android.widget.TimePicker
 import com.google.gson.annotations.SerializedName
 
+data class TestResponse(var schedule: ArrayList<AddSchedule>)
+
 //추가할 일정 모델
 data class AddSchedule(
     var title: String,
@@ -13,5 +15,3 @@ data class AddSchedule(
     var endTime: String,
     var date: String
     )
-
-data class testResponse(var schedule: List<AddSchedule>)
