@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
 
         //date 타입(오늘 날짜)
         val date: Date = Date(calendarView.date)
+        s_day = date.toString()
 
         //날짜 텍스트뷰에 담기
         dayText.text = dateFormat.format(date)
@@ -101,6 +102,24 @@ class MainActivity : AppCompatActivity() {
                 this, LinearLayoutManager.VERTICAL, false)
 
             startActivityForResult(intent, REQUEST_CODE)
+
+            // 서버에 저장할 데이터
+            var callGetSchedule = RetrofitClass.api.getSchedule(
+                title?.text.toString(), content?.text.toString(), memo?.text.toString(),
+                tv_endAt?.text.toString(), s_day)
+
+            // 서버에 데이터 저장(근데 지금 에러남)
+            callGetSchedule.enqueue(object:Callback<TestResponse> {
+                override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
+                    if(response.isSuccessful()) {
+                        Log.d("ORP", "successfully saved")
+                    }
+                }
+
+                override fun onFailure(call: Call<TestResponse>, t: Throwable) {
+                }
+            }
+            )
         }
 
     }
@@ -194,20 +213,21 @@ class MainActivity : AppCompatActivity() {
     // 여기서부터는 서버에 데이터 저장하는거 구현
     // retrofit 설정
     object RetrofitClass {
-        private val retrofit = Retrofit.Builder()
+        private val retrofit : Retrofit by lazy {
+            Retrofit.Builder()
             .baseUrl(API_PERSONAL_SCHEDULE_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
-            private val _api = retrofit.create(testInterface::class.java)
+        }
+        private val _api = retrofit.create(testInterface::class.java)
             // 에러
-                val api
-                get() = _api
+            val api
+            get() = _api
     }
 
     // 인터페이스
     interface testInterface {
-        @GET("/endAt?ownerId=64240be120a07443f9de31f7&date=2023-07-12")
+        @GET("/endAt?ownerId=64240be120a07443f9de31f7")
         fun getSchedule(@Query("title") title: String,
         @Query("content") content: String,
         @Query("memo") memo: String,
@@ -215,22 +235,6 @@ class MainActivity : AppCompatActivity() {
         @Query("date") date: String
         ): Call<TestResponse>
     }
-
-    val callGetSchedule = RetrofitClass.api.getSchedule(
-        "title", "content", "memo", "17:20", s_day)
-
-    callGetSchedule.enqueue(object : Callback<TestResponse> {
-        override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
-            if(response.isSuccessful()) {
-                Log.d("RES", "successfully saved")
-            }
-        }
-
-        override fun onFailure(call: Call<TestResponse>, t: Throwable) {
-            TODO("Not yet implemented")
-        }
-    }
-    )
 
     companion object {
         const val TAG = "DEV"
