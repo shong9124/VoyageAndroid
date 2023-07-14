@@ -226,6 +226,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 인터페이스
+    // 여기 수정중
     interface testInterface {
         @GET("/endAt?ownerId=64240be120a07443f9de31f7&date")
         fun getSchedule(@Query("date") date: String): Call<TestResponse>
