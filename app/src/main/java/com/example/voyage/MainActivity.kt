@@ -28,7 +28,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -104,19 +106,17 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CODE)
 
             // 서버에 저장할 데이터
-            var callGetSchedule = RetrofitClass.api.getSchedule(
-                title?.text.toString(), content?.text.toString(), memo?.text.toString(),
-                tv_endAt?.text.toString(), s_day)
+            var callGetSchedule = RetrofitClass.api.getSchedule(s_day)
 
-            // 서버에 데이터 저장(근데 지금 에러남)
+            // 서버에 데이터 저장(근데 서버에 저장이 안됨)
             callGetSchedule.enqueue(object:Callback<TestResponse> {
                 override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
                     if(response.isSuccessful()) {
-                        Log.d("ORP", "successfully saved")
+                        Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
                     }
                 }
-
                 override fun onFailure(call: Call<TestResponse>, t: Throwable) {
+                    Toast.makeText(this@MainActivity, "fail to save data", Toast.LENGTH_SHORT).show()
                 }
             }
             )
@@ -215,7 +215,7 @@ class MainActivity : AppCompatActivity() {
     object RetrofitClass {
         private val retrofit : Retrofit by lazy {
             Retrofit.Builder()
-            .baseUrl(API_PERSONAL_SCHEDULE_BASE_URL)
+            .baseUrl(API_PERSONAL_SCHEDULE_BASE_URL + "/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         }
@@ -227,13 +227,13 @@ class MainActivity : AppCompatActivity() {
 
     // 인터페이스
     interface testInterface {
-        @GET("/endAt?ownerId=64240be120a07443f9de31f7")
-        fun getSchedule(@Query("title") title: String,
-        @Query("content") content: String,
-        @Query("memo") memo: String,
-        @Query("end_time") endTime: String,
-        @Query("date") date: String
-        ): Call<TestResponse>
+        @GET("/endAt?ownerId=64240be120a07443f9de31f7&date")
+        fun getSchedule(@Query("date") date: String): Call<TestResponse>
+
+//        @POST("/endAt?ownerId=64240be120a07443f9de31f7&date=2023-07-14")
+//        fun postSchedule(
+//            @Body jsonparams: AddSchedule
+//        )
     }
 
     companion object {
