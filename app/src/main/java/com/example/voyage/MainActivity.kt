@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.voyage.MainActivity.RetrofitClass.api
 import org.json.JSONObject
 import org.w3c.dom.Text
 import retrofit2.Call
@@ -41,12 +42,13 @@ import java.time.Month
 import java.time.Year
 import java.util.*
 
+var s_day : String = ""
+
 class MainActivity : AppCompatActivity() {
 
     val REQUEST_CODE = 200
     var scheduleList = ArrayList<AddSchedule>()
     val rv_adapter = MainRvAdapter(scheduleList)
-    var s_day : String = ""
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,21 +107,6 @@ class MainActivity : AppCompatActivity() {
 
             startActivityForResult(intent, REQUEST_CODE)
 
-            // 서버에 저장할 데이터
-            var callGetSchedule = RetrofitClass.api.getSchedule(s_day)
-
-            // 서버에 데이터 저장(근데 서버에 저장이 안됨)
-            callGetSchedule.enqueue(object:Callback<TestResponse> {
-                override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
-                    if(response.isSuccessful()) {
-                        Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                override fun onFailure(call: Call<TestResponse>, t: Throwable) {
-                    Toast.makeText(this@MainActivity, "fail to save data", Toast.LENGTH_SHORT).show()
-                }
-            }
-            )
         }
 
     }
@@ -169,6 +156,38 @@ class MainActivity : AppCompatActivity() {
                     rv_adapter.notifyDataSetChanged()   //전체 새로고침
                     //확인
                     Log.d("ASL", "${scheduleList}")
+
+                    // 서버에 저장할 데이터
+//                    var callGetSchedule = RetrofitClass.api.getSchedule(s_day)
+
+                    // 서버에 데이터 저장(근데 서버에 저장이 안됨)
+                    api.getSchedule(s_day).enqueue(object:Callback<TestResponse> {
+                        override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
+                            if(response.isSuccessful()) {
+                                Log.d("GSD", response.toString())
+                                Log.d("GSD", response.body().toString())
+//                        Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        override fun onFailure(call: Call<TestResponse>, t: Throwable) {
+                            Toast.makeText(this@MainActivity, "fail to save data", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    )
+
+                    val data =
+                        AddSchedule(getTitle.toString(), getContent.toString(), getMemo.toString(), getEndTime.toString(), s_day)
+
+                    api.postSchedule(data).enqueue(object : Callback<TestResponse> {
+                        override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
+                            Log.d("log", response.toString())
+                            Log.d("log", response.body().toString())
+                        }
+
+                        override fun onFailure(call: Call<TestResponse>, t: Throwable) {
+                            TODO("Not yet implemented")
+                        }
+                    })
                 }
             }
         }
@@ -228,13 +247,14 @@ class MainActivity : AppCompatActivity() {
     // 인터페이스
     // 여기 수정중
     interface testInterface {
-        @GET("/endAt?ownerId=64240be120a07443f9de31f7&date")
+        @GET("/endAt?ownerId=64240be120a07443f9de31f7")
         fun getSchedule(@Query("date") date: String): Call<TestResponse>
 
-//        @POST("/endAt?ownerId=64240be120a07443f9de31f7&date=2023-07-14")
-//        fun postSchedule(
-//            @Body jsonparams: AddSchedule
-//        )
+        @POST("/endAt?ownerId=64240be120a07443f9de31f7")
+        fun postSchedule(
+            @Body jsonparams: AddSchedule,
+            @Query("date") date: String = s_day
+        ): Call<TestResponse>
     }
 
     companion object {
