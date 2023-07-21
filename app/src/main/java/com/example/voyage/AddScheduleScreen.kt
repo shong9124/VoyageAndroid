@@ -34,7 +34,7 @@ class AddScheduleScreen : AppCompatActivity() {
 
         //timePicker 값 변경 이벤트
         endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
-            endTime = "End event at ${hourOfDay} : ${minute}"
+            endTime = "${hourOfDay}:${minute}"
         }
 
         //화면 전환
@@ -44,8 +44,6 @@ class AddScheduleScreen : AppCompatActivity() {
             intent.putExtra("content", content?.text.toString())
             intent.putExtra("memo", memo?.text.toString())
             intent.putExtra("endTime", endTime)
-
-
 
             setResult(Activity.RESULT_OK, intent)
 

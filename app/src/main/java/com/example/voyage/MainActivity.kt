@@ -5,6 +5,7 @@ package com.example.voyage
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.PostProcessor
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,7 +21,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.voyage.MainActivity.RetrofitClass.api
+//import com.example.voyage.MainActivity.RetrofitClass.api
+import com.example.voyage.databinding.ActivityMainBinding
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.json.JSONObject
 import org.w3c.dom.Text
 import retrofit2.Call
@@ -41,14 +45,18 @@ import java.text.SimpleDateFormat
 import java.time.Month
 import java.time.Year
 import java.util.*
+import kotlin.collections.ArrayList
 
 var s_day : String = ""
+var scheduleList = ArrayList<AddSchedule>()
+val rv_adapter = MainRvAdapter(scheduleList)
 
 class MainActivity : AppCompatActivity() {
 
+//    val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    val api = testInterface.create()
+
     val REQUEST_CODE = 200
-    var scheduleList = ArrayList<AddSchedule>()
-    val rv_adapter = MainRvAdapter(scheduleList)
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
         //date 타입(오늘 날짜)
         val date: Date = Date(calendarView.date)
-        s_day = date.toString()
+        s_day = dateFormat.format(date)
 
         //날짜 텍스트뷰에 담기
         dayText.text = dateFormat.format(date)
@@ -100,7 +108,6 @@ class MainActivity : AppCompatActivity() {
                 tv_endAt?.text.toString(),
                 s_day
             ))
-
             rv_schedule.adapter = rv_adapter
             rv_schedule.layoutManager = LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false)
@@ -108,7 +115,6 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CODE)
 
         }
-
     }
 
     //화면 전환할 때 데이터 받아 오는 함수..
@@ -161,31 +167,34 @@ class MainActivity : AppCompatActivity() {
 //                    var callGetSchedule = RetrofitClass.api.getSchedule(s_day)
 
                     // 서버에 데이터 저장(근데 서버에 저장이 안됨)
-                    api.getSchedule(s_day).enqueue(object:Callback<TestResponse> {
-                        override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
+                    api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
+                        override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
                             if(response.isSuccessful()) {
-                                Log.d("GSD", response.toString())
-                                Log.d("GSD", response.body().toString())
-//                        Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
+
+                                Log.d("log", "get: " + response.toString())
+                                Log.d("log", "get: " + response.body().toString())
+//                                Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
                             }
                         }
-                        override fun onFailure(call: Call<TestResponse>, t: Throwable) {
-                            Toast.makeText(this@MainActivity, "fail to save data", Toast.LENGTH_SHORT).show()
+                        override fun onFailure(call: Call<GetResponse>, t: Throwable) {
+                            Log.d("log", "get: fail to save data")
+//                            Toast.makeText(this@MainActivity, "fail to save data", Toast.LENGTH_SHORT).show()
                         }
                     }
                     )
 
                     val data =
-                        AddSchedule(getTitle.toString(), getContent.toString(), getMemo.toString(), getEndTime.toString(), s_day)
+                        PostModel(getTitle.toString(), getContent.toString(), getMemo.toString(), s_day, getEndTime.toString())
 
-                    api.postSchedule(data).enqueue(object : Callback<TestResponse> {
-                        override fun onResponse(call: Call<TestResponse>, response: Response<TestResponse>) {
-                            Log.d("log", response.toString())
-                            Log.d("log", response.body().toString())
+                    api.postSchedule(data).enqueue(object : Callback<PostResult> {
+                        override fun onResponse(call: Call<PostResult>, response: Response<PostResult>) {
+                            Log.d("log", "post: " + response.toString())
+                            Log.d("log", "post: " + response.body().toString())
+//                            Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
                         }
 
-                        override fun onFailure(call: Call<TestResponse>, t: Throwable) {
-                            TODO("Not yet implemented")
+                        override fun onFailure(call: Call<PostResult>, t: Throwable) {
+                            Log.d("log", "post: fail to save data")
                         }
                     })
                 }
@@ -231,36 +240,51 @@ class MainActivity : AppCompatActivity() {
 
     // 여기서부터는 서버에 데이터 저장하는거 구현
     // retrofit 설정
-    object RetrofitClass {
-        private val retrofit : Retrofit by lazy {
-            Retrofit.Builder()
-            .baseUrl(API_PERSONAL_SCHEDULE_BASE_URL + "/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        }
-        private val _api = retrofit.create(testInterface::class.java)
-            // 에러
-            val api
-            get() = _api
-    }
+//    object RetrofitClass {
+//        private val retrofit : Retrofit by lazy {
+//            Retrofit.Builder()
+//            .baseUrl(API_PERSONAL_SCHEDULE_BASE_URL + "/")
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+//        }
+//        private val _api = retrofit.create(testInterface::class.java)
+//            val api
+//            get() = _api
+//    }
 
     // 인터페이스
-    // 여기 수정중
     interface testInterface {
-        @GET("/endAt?ownerId=64240be120a07443f9de31f7")
-        fun getSchedule(@Query("date") date: String): Call<TestResponse>
+        @GET("schedule/endAt?ownerId=64240be120a07443f9de31f7")
+        fun getSchedule(
+            //Query: url부분에 추가되는 부분
+            @Query("date") date: String,
+        ): Call<GetResponse>
 
-        @POST("/endAt?ownerId=64240be120a07443f9de31f7")
+        @POST("64240d2c20a07443f9de31fc")
         fun postSchedule(
-            @Body jsonparams: AddSchedule,
+            @Body jsonparams: PostModel,
             @Query("date") date: String = s_day
-        ): Call<TestResponse>
+        ): Call<PostResult>
+
+        companion object {
+            fun create(): testInterface {
+
+                val gson: Gson = GsonBuilder().setLenient().create();
+
+                return Retrofit.Builder()
+                    .baseUrl(API_SCHEDULE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build()
+                    .create(testInterface::class.java)
+            }
+        }
     }
 
     companion object {
         const val TAG = "DEV"
 
         const val API_PERSONAL_SCHEDULE_BASE_URL = "http://13.209.38.50:8080/api/personal/schedule"
+        const val API_SCHEDULE_URL = "http://13.209.38.50:8080/api/personal/"
     }
 }
 
