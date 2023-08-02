@@ -21,11 +21,11 @@ data class AddSchedule(
     )
 
 data class PostModel(
-    var Content: String,
-    var Color: String? = null,
-    var Memo: String,
-    var EndDate: String,
-    var EndTime: String,
+    var content: String,
+    var color: String? = "blue",
+    var memo: String,
+    var endDate: String,
+    var endTime: String,
     val remindTime: String? = null,
     val remindDate: String? = null
 )

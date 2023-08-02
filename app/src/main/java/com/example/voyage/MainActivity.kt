@@ -186,14 +186,14 @@ class MainActivity : AppCompatActivity() {
                     val data =
                         PostModel(getTitle.toString(), getContent.toString(), getMemo.toString(), s_day, getEndTime.toString())
 
-                    api.postSchedule(data).enqueue(object : Callback<PostResult> {
-                        override fun onResponse(call: Call<PostResult>, response: Response<PostResult>) {
+                    api.postSchedule(data).enqueue(object : Callback<PostModel> {
+                        override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
                             Log.d("log", "post: " + response.toString())
                             Log.d("log", "post: " + response.body().toString())
 //                            Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
                         }
 
-                        override fun onFailure(call: Call<PostResult>, t: Throwable) {
+                        override fun onFailure(call: Call<PostModel>, t: Throwable) {
                             Log.d("log", "post: fail to save data")
                         }
                     })
@@ -263,8 +263,8 @@ class MainActivity : AppCompatActivity() {
         @POST("64240d2c20a07443f9de31fc")
         fun postSchedule(
             @Body jsonparams: PostModel,
-            @Query("date") date: String = s_day
-        ): Call<PostResult>
+//            @Query("date") date: String = s_day
+        ): Call<PostModel>
 
         companion object {
             fun create(): testInterface {
