@@ -23,10 +23,10 @@
         >
 
         <TextView
-            android:id="@+id/tv_title"
+            android:id="@+id/tv_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="title"
+            android:text="content"
             android:textSize="23sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -46,14 +46,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.016"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_content"
             app:layout_constraintVertical_bias="0.562" />
 
         <TextView
-            android:id="@+id/tv_content"
+            android:id="@+id/tv_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="content"
+            android:text="color"
             android:textSize="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -68,9 +68,9 @@
             android:layout_height="wrap_content"
             android:text="endAt"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_content"
+            app:layout_constraintEnd_toStartOf="@+id/tv_color"
             app:layout_constraintHorizontal_bias="0.608"
-            app:layout_constraintStart_toEndOf="@+id/tv_title"
+            app:layout_constraintStart_toEndOf="@+id/tv_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.297" />
 

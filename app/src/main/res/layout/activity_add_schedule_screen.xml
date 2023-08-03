@@ -18,8 +18,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_edt"
+        app:layout_constraintTop_toBottomOf="@+id/color_edt"
         app:layout_constraintVertical_bias="0.072" />
+
+    <EditText
+        android:id="@+id/color_edt"
+        android:layout_width="340dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
+        android:ems="10"
+        android:hint="color of schedule"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content_edt"
+        app:layout_constraintVertical_bias="0.068" />
 
     <EditText
         android:id="@+id/content_edt"
@@ -28,21 +43,6 @@
         android:layout_marginBottom="20dp"
         android:ems="10"
         android:hint="content of schedule"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_edt"
-        app:layout_constraintVertical_bias="0.068" />
-
-    <EditText
-        android:id="@+id/title_edt"
-        android:layout_width="340dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="20dp"
-        android:ems="10"
-        android:hint="title of schedule"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

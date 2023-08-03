@@ -24,8 +24,8 @@ class AddScheduleScreen : AppCompatActivity() {
 
         //객체 생성
         val submitSchedule: Button = findViewById(R.id.btn_send_schedule)
-        var title: EditText? = findViewById(R.id.title_edt)
         var content: EditText? = findViewById(R.id.content_edt)
+        var color: EditText? = findViewById(R.id.color_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
 
         //timePicker 관련 객체
@@ -40,8 +40,8 @@ class AddScheduleScreen : AppCompatActivity() {
         //화면 전환
         submitSchedule.setOnClickListener {
             val intent = Intent()//this, MainActivity :: class.java)
-            intent.putExtra("title", title?.text.toString())
             intent.putExtra("content", content?.text.toString())
+            intent.putExtra("color", color?.text.toString())
             intent.putExtra("memo", memo?.text.toString())
             intent.putExtra("endTime", endTime)
 

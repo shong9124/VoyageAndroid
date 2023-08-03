@@ -12,17 +12,17 @@ data class GetResponse(
 
 //추가할 일정 모델
 data class AddSchedule(
-    var title: String,
     var content: String,
+    var color: String,
     var memo: String,
+    var endDate: String,
     @SerializedName("end_time")
-    var endTime: String,
-    var date: String
-    )
+    var endTime: String
+)
 
 data class PostModel(
     var content: String,
-    var color: String? = "blue",
+    var color: String,
     var memo: String,
     var endDate: String,
     var endTime: String,

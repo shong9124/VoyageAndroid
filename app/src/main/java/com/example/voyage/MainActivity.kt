@@ -34,8 +34,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -89,8 +91,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         //일정 추가 관련 객체
-        var title: EditText? = findViewById(R.id.title_edt)
         var content: EditText? = findViewById(R.id.content_edt)
+        var color: EditText? = findViewById(R.id.color_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
         var tv_endAt: TextView? = findViewById(R.id.tv_endAt)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
@@ -102,8 +104,8 @@ class MainActivity : AppCompatActivity() {
 
             //일정 추가
             scheduleList.add(AddSchedule(
-                title?.text.toString(),
                 content?.text.toString(),
+                color?.text.toString(),
                 memo?.text.toString(),
                 tv_endAt?.text.toString(),
                 s_day
@@ -113,8 +115,8 @@ class MainActivity : AppCompatActivity() {
                 this, LinearLayoutManager.VERTICAL, false)
 
             startActivityForResult(intent, REQUEST_CODE)
-
         }
+
     }
 
     //화면 전환할 때 데이터 받아 오는 함수..
@@ -129,19 +131,19 @@ class MainActivity : AppCompatActivity() {
                 REQUEST_CODE -> {
 
                     //받아온 editText 값들의 text를 추출해서 get어쩌고에 다 넣어줌
-                    var getTitle = data?.getStringExtra("title")
                     var getContent = data?.getStringExtra("content")
+                    var getColor = data?.getStringExtra("color")
                     var getMemo = data?.getStringExtra("memo")
                     var getEndTime = data?.getStringExtra("endTime")
 
                     //입력값이 없을 경우
-                    if (getTitle == null) {
-                        var title_tv : TextView = findViewById(R.id.tv_title)
-                        title_tv.visibility = View.INVISIBLE
-                    }
                     if (getContent == null) {
                         var content_tv : TextView = findViewById(R.id.tv_content)
                         content_tv.visibility = View.INVISIBLE
+                    }
+                    if (getColor == null) {
+                        var color_tv : TextView = findViewById(R.id.tv_color)
+                        color_tv.visibility = View.INVISIBLE
                     }
                     if (getMemo == null) {
                         var memo_tv : TextView = findViewById(R.id.tv_memo)
@@ -154,8 +156,8 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     //scheduleList에 각각 넣어줌
-                    scheduleList[scheduleList.size - 1].title = getTitle.toString()
                     scheduleList[scheduleList.size - 1].content = getContent.toString()
+                    scheduleList[scheduleList.size - 1].color = getColor.toString()
                     scheduleList[scheduleList.size - 1].memo = getMemo.toString()
                     scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
 
@@ -163,40 +165,48 @@ class MainActivity : AppCompatActivity() {
                     //확인
                     Log.d("ASL", "${scheduleList}")
 
-                    // 서버에 저장할 데이터
-//                    var callGetSchedule = RetrofitClass.api.getSchedule(s_day)
-
-                    // 서버에 데이터 저장(근데 서버에 저장이 안됨)
+                    // 서버에 데이터 저장(get)
                     api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
                         override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
                             if(response.isSuccessful()) {
 
                                 Log.d("log", "get: " + response.toString())
                                 Log.d("log", "get: " + response.body().toString())
-//                                Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
                             }
                         }
                         override fun onFailure(call: Call<GetResponse>, t: Throwable) {
                             Log.d("log", "get: fail to save data")
-//                            Toast.makeText(this@MainActivity, "fail to save data", Toast.LENGTH_SHORT).show()
                         }
                     }
                     )
 
+                    //post
                     val data =
-                        PostModel(getTitle.toString(), getContent.toString(), getMemo.toString(), s_day, getEndTime.toString())
+                        PostModel(getContent.toString(), getColor.toString(),
+                            getMemo.toString(), s_day, getEndTime.toString())
 
-                    api.postSchedule(data).enqueue(object : Callback<PostModel> {
-                        override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
-                            Log.d("log", "post: " + response.toString())
-                            Log.d("log", "post: " + response.body().toString())
-//                            Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
-                        }
+//                    api.postSchedule(data).enqueue(object : Callback<PostModel> {
+//                        override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
+//                            Log.d("log", "post: " + response.toString())
+//                            Log.d("log", "post: " + response.body().toString())
+////                            Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
+//                        }
+//                        override fun onFailure(call: Call<PostModel>, t: Throwable) {
+//                            Log.d("log", "post: fail to save data")
+//                        }
+//                    })
 
-                        override fun onFailure(call: Call<PostModel>, t: Throwable) {
-                            Log.d("log", "post: fail to save data")
-                        }
-                    })
+                    //delete(에러)
+//                    api.deleteSchedule(s_day, "test").enqueue(object: Callback<GetResponse> {
+//                        override fun onResponse(
+//                            call: Call<GetResponse>,
+//                            response: Response<GetResponse>) {
+//                            Log.d("log", "deleted")
+//                        }
+//                        override fun onFailure(call: Call<GetResponse>, t: Throwable) {
+//                            Log.d("log", "fail to delete")
+//                        }
+//                    })
                 }
             }
         }
@@ -237,34 +247,24 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-
-    // 여기서부터는 서버에 데이터 저장하는거 구현
-    // retrofit 설정
-//    object RetrofitClass {
-//        private val retrofit : Retrofit by lazy {
-//            Retrofit.Builder()
-//            .baseUrl(API_PERSONAL_SCHEDULE_BASE_URL + "/")
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//        }
-//        private val _api = retrofit.create(testInterface::class.java)
-//            val api
-//            get() = _api
-//    }
-
     // 인터페이스
     interface testInterface {
         @GET("schedule/endAt?ownerId=64240be120a07443f9de31f7")
         fun getSchedule(
             //Query: url부분에 추가되는 부분
-            @Query("date") date: String,
+            @Query("date") date: String
         ): Call<GetResponse>
 
-        @POST("64240d2c20a07443f9de31fc")
-        fun postSchedule(
-            @Body jsonparams: PostModel,
-//            @Query("date") date: String = s_day
-        ): Call<PostModel>
+//        @POST("64240d2c20a07443f9de31fc")
+//        fun postSchedule(
+//            @Body jsonparams: PostModel,
+//        ): Call<PostModel>
+
+        @DELETE("schedule/endAt?ownerId=64240be120a07443f9de31f7")
+        fun deleteSchedule(
+            @Query("date") date: String,
+            @Path("content") content: String
+        )
 
         companion object {
             fun create(): testInterface {
