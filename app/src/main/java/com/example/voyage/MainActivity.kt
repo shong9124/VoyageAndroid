@@ -156,10 +156,10 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     //scheduleList에 각각 넣어줌
-                    scheduleList[scheduleList.size - 1].content = getContent.toString()
-                    scheduleList[scheduleList.size - 1].color = getColor.toString()
-                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
-                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
+//                    scheduleList[scheduleList.size - 1].content = getContent.toString()
+//                    scheduleList[scheduleList.size - 1].color = getColor.toString()
+//                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
+//                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
 
                     rv_adapter.notifyDataSetChanged()   //전체 새로고침
                     //확인
