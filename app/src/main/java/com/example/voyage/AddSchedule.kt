@@ -16,7 +16,6 @@ data class AddSchedule(
     var color: String,
     var memo: String,
     var endDate: String,
-    @SerializedName("end_time")
     var endTime: String
 )
 

@@ -102,6 +102,8 @@ class MainActivity : AppCompatActivity() {
         add.setOnClickListener{
             val intent = Intent(this, AddScheduleScreen :: class.java)
 
+//            scheduleList = GetResponse()?.data!!
+
             //일정 추가
             scheduleList.add(AddSchedule(
                 content?.text.toString(),
@@ -155,11 +157,10 @@ class MainActivity : AppCompatActivity() {
                         endAt.visibility = View.INVISIBLE
                     }
 
-                    //scheduleList에 각각 넣어줌
-//                    scheduleList[scheduleList.size - 1].content = getContent.toString()
-//                    scheduleList[scheduleList.size - 1].color = getColor.toString()
-//                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
-//                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
+                    scheduleList[scheduleList.size - 1].content = getContent.toString()
+                    scheduleList[scheduleList.size - 1].color = getColor.toString()
+                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
+                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
 
                     rv_adapter.notifyDataSetChanged()   //전체 새로고침
                     //확인
@@ -169,7 +170,6 @@ class MainActivity : AppCompatActivity() {
                     api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
                         override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
                             if(response.isSuccessful()) {
-
                                 Log.d("log", "get: " + response.toString())
                                 Log.d("log", "get: " + response.body().toString())
                             }
@@ -177,24 +177,23 @@ class MainActivity : AppCompatActivity() {
                         override fun onFailure(call: Call<GetResponse>, t: Throwable) {
                             Log.d("log", "get: fail to save data")
                         }
-                    }
-                    )
+                    })
 
                     //post
                     val data =
                         PostModel(getContent.toString(), getColor.toString(),
                             getMemo.toString(), s_day, getEndTime.toString())
 
-//                    api.postSchedule(data).enqueue(object : Callback<PostModel> {
-//                        override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
-//                            Log.d("log", "post: " + response.toString())
-//                            Log.d("log", "post: " + response.body().toString())
-////                            Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
-//                        }
-//                        override fun onFailure(call: Call<PostModel>, t: Throwable) {
-//                            Log.d("log", "post: fail to save data")
-//                        }
-//                    })
+                    api.postSchedule(data).enqueue(object : Callback<PostModel> {
+                        override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
+                            Log.d("log", "post: " + response.toString())
+                            Log.d("log", "post: " + response.body().toString())
+//                            Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
+                        }
+                        override fun onFailure(call: Call<PostModel>, t: Throwable) {
+                            Log.d("log", "post: fail to save data")
+                        }
+                    })
 
                     //delete(에러)
 //                    api.deleteSchedule(s_day, "test").enqueue(object: Callback<GetResponse> {
@@ -219,6 +218,10 @@ class MainActivity : AppCompatActivity() {
         override fun run() {
             var testDate = s_day
             val testUserId = "64240be120a07443f9de31f7"
+
+            if (testDate == GetResponse().data?.map{ AddSchedule("", "", "", endDate = s_day, "") }.toString()) {
+                TODO() //선택한 날짜와 api에 저장한 데이터의 날짜가 같으면 그날의 일정을 보여주는... 그걸 만드는중 근데 어케 해야할지 감이 안 잡힘...
+            }
 
             var url =
                 URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
@@ -255,10 +258,10 @@ class MainActivity : AppCompatActivity() {
             @Query("date") date: String
         ): Call<GetResponse>
 
-//        @POST("64240d2c20a07443f9de31fc")
-//        fun postSchedule(
-//            @Body jsonparams: PostModel,
-//        ): Call<PostModel>
+        @POST("64240d2c20a07443f9de31fc")
+        fun postSchedule(
+            @Body jsonparams: PostModel,
+        ): Call<PostModel>
 
         @DELETE("schedule/endAt?ownerId=64240be120a07443f9de31f7")
         fun deleteSchedule(
