@@ -51,7 +51,7 @@ import kotlin.collections.ArrayList
 
 var s_day : String = ""
 var scheduleList = ArrayList<AddSchedule>()
-val rv_adapter = MainRvAdapter(scheduleList)
+var rv_adapter = MainRvAdapter(scheduleList)
 
 class MainActivity : AppCompatActivity() {
 
@@ -88,6 +88,11 @@ class MainActivity : AppCompatActivity() {
 
             //api 호출
             CallApiThread().start()
+
+            //그룹화... map만 어케 하면 1차적으로 어케든 할 수 있을 것 같은데...!
+            var scheduleGroup = scheduleList.groupBy{it.endDate}
+//            var scheduleGroup_array = ArrayList(scheduleGroup)
+            Log.d("DEV", "${s_day}: ${scheduleGroup}")
         }
 
         //일정 추가 관련 객체

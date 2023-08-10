@@ -32,3 +32,7 @@ data class PostModel(
 data class PostResult(
     var data : PostModel
 )
+
+data class ScheduleGroup(
+    var group : String
+)
