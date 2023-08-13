@@ -88,11 +88,13 @@ class MainActivity : AppCompatActivity() {
 
             //api 호출
             CallApiThread().start()
+            Log.d("ASL", "${scheduleList}")
 
             //그룹화... map만 어케 하면 1차적으로 어케든 할 수 있을 것 같은데...!
-            var scheduleGroup = scheduleList.groupBy{it.endDate}
-//            var scheduleGroup_array = ArrayList(scheduleGroup)
-            Log.d("DEV", "${s_day}: ${scheduleGroup}")
+//            var schedule_list = scheduleList.toList()
+//            var scheduleGroup = schedule_list.groupBy{it.endDate}
+//            var scheduleGroup_list = scheduleGroup.toList()
+//            var scheduleGroup_arr = ArrayList(scheduleGroup_list)
         }
 
         //일정 추가 관련 객체
@@ -114,8 +116,8 @@ class MainActivity : AppCompatActivity() {
                 content?.text.toString(),
                 color?.text.toString(),
                 memo?.text.toString(),
+                s_day,
                 tv_endAt?.text.toString(),
-                s_day
             ))
             rv_schedule.adapter = rv_adapter
             rv_schedule.layoutManager = LinearLayoutManager(
@@ -162,10 +164,11 @@ class MainActivity : AppCompatActivity() {
                         endAt.visibility = View.INVISIBLE
                     }
 
-                    scheduleList[scheduleList.size - 1].content = getContent.toString()
-                    scheduleList[scheduleList.size - 1].color = getColor.toString()
-                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
-                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
+//                    scheduleList[scheduleList.size - 1].content = getContent.toString()
+//                    scheduleList[scheduleList.size - 1].color = getColor.toString()
+//                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
+//                    scheduleList[scheduleList.size - 1].endDate = s_day
+//                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
 
                     rv_adapter.notifyDataSetChanged()   //전체 새로고침
                     //확인
@@ -224,6 +227,8 @@ class MainActivity : AppCompatActivity() {
             var testDate = s_day
             val testUserId = "64240be120a07443f9de31f7"
 
+            //GetResponse를 쓰면 안됨... 얘는 그냥 api 넘겨줄 때 쓰는 데이터 틀 같은 거임
+            //걍 빈껍데기라 여기에 데이터가 저장 되는 거xx 다음에 수정하렴
             if (testDate == GetResponse().data?.map{ AddSchedule("", "", "", endDate = s_day, "") }.toString()) {
                 TODO() //선택한 날짜와 api에 저장한 데이터의 날짜가 같으면 그날의 일정을 보여주는... 그걸 만드는중 근데 어케 해야할지 감이 안 잡힘...
             }
@@ -253,8 +258,15 @@ class MainActivity : AppCompatActivity() {
             Log.d(Companion.TAG, "code: ${root.get("code")}")
             Log.d(Companion.TAG, "data: ${root.get("data")}")
 
+            //Ui 접근 가능하게 함 -> 메인스레드에서 동작
+            runOnUiThread {
+                var scheduleList_api = api.getSchedule(s_day) as ArrayList<AddSchedule>
+                scheduleList = scheduleList_api
+                Log.d("DEV", "${scheduleList_api}")
+            }
         }
     }
+
     // 인터페이스
     interface testInterface {
         @GET("schedule/endAt?ownerId=64240be120a07443f9de31f7")
