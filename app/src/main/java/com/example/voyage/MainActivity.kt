@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.voyage.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import org.json.JSONArray
 import org.json.JSONObject
 import org.w3c.dom.Text
 import retrofit2.Call
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         //날짜 관련 객체 생성
         val dayText: TextView = findViewById(R.id.day_text)
         val calendarView: CalendarView = findViewById(R.id.calendarView)
+        val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
         //날짜 형태
         val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -90,11 +92,11 @@ class MainActivity : AppCompatActivity() {
             CallApiThread().start()
             Log.d("ASL", "${scheduleList}")
 
-            //그룹화... map만 어케 하면 1차적으로 어케든 할 수 있을 것 같은데...!
-//            var schedule_list = scheduleList.toList()
-//            var scheduleGroup = schedule_list.groupBy{it.endDate}
-//            var scheduleGroup_list = scheduleGroup.toList()
-//            var scheduleGroup_arr = ArrayList(scheduleGroup_list)
+            rv_schedule.adapter = rv_adapter
+            rv_schedule.layoutManager = LinearLayoutManager(
+                this, LinearLayoutManager.VERTICAL, false)
+
+            rv_adapter.notifyDataSetChanged()   //전체 새로고침
         }
 
         //일정 추가 관련 객체
@@ -102,26 +104,20 @@ class MainActivity : AppCompatActivity() {
         var color: EditText? = findViewById(R.id.color_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
         var tv_endAt: TextView? = findViewById(R.id.tv_endAt)
-        val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
         add.setOnClickListener{
             val intent = Intent(this, AddScheduleScreen :: class.java)
 
-//            scheduleList = GetResponse()?.data!!
-
             //일정 추가
-            scheduleList.add(AddSchedule(
-                content?.text.toString(),
-                color?.text.toString(),
-                memo?.text.toString(),
-                s_day,
-                tv_endAt?.text.toString(),
-            ))
-            rv_schedule.adapter = rv_adapter
-            rv_schedule.layoutManager = LinearLayoutManager(
-                this, LinearLayoutManager.VERTICAL, false)
+//            scheduleList.add(AddSchedule(
+//                content?.text.toString(),
+//                color?.text.toString(),
+//                memo?.text.toString(),
+//                s_day,
+//                tv_endAt?.text.toString(),
+//            ))
 
             startActivityForResult(intent, REQUEST_CODE)
         }
@@ -170,11 +166,10 @@ class MainActivity : AppCompatActivity() {
 //                    scheduleList[scheduleList.size - 1].endDate = s_day
 //                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
 
-                    rv_adapter.notifyDataSetChanged()   //전체 새로고침
                     //확인
                     Log.d("ASL", "${scheduleList}")
 
-                    // 서버에 데이터 저장(get)
+                    //서버에 데이터 저장(get)
                     api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
                         override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
                             if(response.isSuccessful()) {
@@ -260,9 +255,26 @@ class MainActivity : AppCompatActivity() {
 
             //Ui 접근 가능하게 함 -> 메인스레드에서 동작
             runOnUiThread {
-                var scheduleList_api = api.getSchedule(s_day) as ArrayList<AddSchedule>
-                scheduleList = scheduleList_api
+                //api에서 data부분 내용을 가져옴
+                val jsonArray : JSONArray = root.optJSONArray("data")
+                val types : List<String> = (0 until jsonArray.length()).map {
+                    jsonArray.getString(it).toString()
+                }
+                //형변환
+                var scheduleList_api = types as ArrayList<AddSchedule>
+//                scheduleList = scheduleList_api
+//                rv_adapter = MainRvAdapter(scheduleList_api)
                 Log.d("DEV", "${scheduleList_api}")
+                if (scheduleList_api.size != 0) {
+                    for (i : Int in 0 .. scheduleList_api.size) {
+                        //AddSchedule() 형식이 아니라서 참조가 안되던거였음... 수정필요
+                        scheduleList[i].content = scheduleList_api[i].content
+                        scheduleList[i].color = scheduleList_api[i].color
+                        scheduleList[i].memo = scheduleList_api[i].memo
+                        scheduleList[i].endDate = scheduleList_api[i].endDate
+                        scheduleList[i].endTime = scheduleList_api[i].endTime
+                    }
+                }
             }
         }
     }
