@@ -5,35 +5,27 @@ package com.example.voyage
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.PostProcessor
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.TimePicker
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-//import com.example.voyage.MainActivity.RetrofitClass.api
-import com.example.voyage.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.json.JSONArray
 import org.json.JSONObject
-import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -45,8 +37,6 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.Month
-import java.time.Year
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -56,7 +46,6 @@ var rv_adapter = MainRvAdapter(scheduleList)
 
 class MainActivity : AppCompatActivity() {
 
-//    val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     val api = testInterface.create()
 
     val REQUEST_CODE = 200
@@ -111,6 +100,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddScheduleScreen :: class.java)
 
             //일정 추가
+            //scheduleList = scheduleList_api 로 쓸거라 주석처리함
 //            scheduleList.add(AddSchedule(
 //                content?.text.toString(),
 //                color?.text.toString(),
@@ -160,6 +150,7 @@ class MainActivity : AppCompatActivity() {
                         endAt.visibility = View.INVISIBLE
                     }
 
+                    //scheduleList = scheduleList_api 로 쓸거라서 주석처리함
 //                    scheduleList[scheduleList.size - 1].content = getContent.toString()
 //                    scheduleList[scheduleList.size - 1].color = getColor.toString()
 //                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
@@ -198,7 +189,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     })
 
-                    //delete(에러)
+                    //delete(에러&보류)
 //                    api.deleteSchedule(s_day, "test").enqueue(object: Callback<GetResponse> {
 //                        override fun onResponse(
 //                            call: Call<GetResponse>,
@@ -257,24 +248,39 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 //api에서 data부분 내용을 가져옴
                 val jsonArray : JSONArray = root.optJSONArray("data")
+
+                //NullPointerException
+                //root에서 각각 추출해서 group으로 묶으려 했는데 NullPointerException 에러남
+//                val api_content : String = root.get("content").toString()
+//                val api_color : String = root.get("color").toString()
+//                val api_memo : String = root.get("memo").toString()
+//                val api_endDate : String = root.get("endDate").toString()
+//                val api_endTime : String = root.get("endTime").toString()
+//                val group = AddSchedule(api_content, api_color, api_memo, api_endDate, api_endTime)
+
                 val types : List<String> = (0 until jsonArray.length()).map {
                     jsonArray.getString(it).toString()
                 }
+                //ClassCastException 에러... 형변환이 안됨
+                var group = types.groupBy { "endDate" }
+
                 //형변환
-                var scheduleList_api = types as ArrayList<AddSchedule>
+                var scheduleList_api = group as ArrayList<AddSchedule>
+                //Log.d()로 찍어보고 잘 들어갈 때 scheduleList = scheduleList_api 사용할거라 주석처리함
 //                scheduleList = scheduleList_api
 //                rv_adapter = MainRvAdapter(scheduleList_api)
                 Log.d("DEV", "${scheduleList_api}")
-                if (scheduleList_api.size != 0) {
-                    for (i : Int in 0 .. scheduleList_api.size) {
+
+//                if (scheduleList_api.size != 0) {
+//                    for (i : Int in 0 .. scheduleList_api.size) {
                         //AddSchedule() 형식이 아니라서 참조가 안되던거였음... 수정필요
-                        scheduleList[i].content = scheduleList_api[i].content
-                        scheduleList[i].color = scheduleList_api[i].color
-                        scheduleList[i].memo = scheduleList_api[i].memo
-                        scheduleList[i].endDate = scheduleList_api[i].endDate
-                        scheduleList[i].endTime = scheduleList_api[i].endTime
-                    }
-                }
+//                        scheduleList[i].content = scheduleList_api[i].content
+//                        scheduleList[i].color = scheduleList_api[i].color
+//                        scheduleList[i].memo = scheduleList_api[i].memo
+//                        scheduleList[i].endDate = scheduleList_api[i].endDate
+//                        scheduleList[i].endTime = scheduleList_api[i].endTime
+//                    }
+//                }
             }
         }
     }
