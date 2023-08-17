@@ -213,12 +213,6 @@ class MainActivity : AppCompatActivity() {
             var testDate = s_day
             val testUserId = "64240be120a07443f9de31f7"
 
-            //GetResponse를 쓰면 안됨... 얘는 그냥 api 넘겨줄 때 쓰는 데이터 틀 같은 거임
-            //걍 빈껍데기라 여기에 데이터가 저장 되는 거xx 다음에 수정하렴
-            if (testDate == GetResponse().data?.map{ AddSchedule("", "", "", endDate = s_day, "") }.toString()) {
-                TODO() //선택한 날짜와 api에 저장한 데이터의 날짜가 같으면 그날의 일정을 보여주는... 그걸 만드는중 근데 어케 해야할지 감이 안 잡힘...
-            }
-
             var url =
                 URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
 
@@ -249,38 +243,23 @@ class MainActivity : AppCompatActivity() {
                 //api에서 data부분 내용을 가져옴
                 val jsonArray : JSONArray = root.optJSONArray("data")
 
-                //NullPointerException
-                //root에서 각각 추출해서 group으로 묶으려 했는데 NullPointerException 에러남
-//                val api_content : String = root.get("content").toString()
-//                val api_color : String = root.get("color").toString()
-//                val api_memo : String = root.get("memo").toString()
-//                val api_endDate : String = root.get("endDate").toString()
-//                val api_endTime : String = root.get("endTime").toString()
-//                val group = AddSchedule(api_content, api_color, api_memo, api_endDate, api_endTime)
+                for (index in 0 until jsonArray.length()) {
+                    val jsonObject = jsonArray.getJSONObject(index)
 
-                val types : List<String> = (0 until jsonArray.length()).map {
-                    jsonArray.getString(it).toString()
+                    val api_content = jsonObject.getString("content")
+                    val api_color = jsonObject.getString("color")
+                    val api_memo = jsonObject.getString("memo")
+                    val api_endDate = jsonObject.getString("endDate")
+                    val api_endTime = jsonObject.getString("endTime")
+
+                    var group = AddSchedule(api_content, api_color, api_memo, api_endDate, api_endTime)
+
+                    if (api_endDate == s_day) {
+                        scheduleList.add(group)
+                        // 코드 추가 필요... 일정 불러오고 화면에 띄우는 건 되는데 날짜를 클릭할 때마다 계속 똑같은 일정이 늘어남
+                    }
+
                 }
-                //ClassCastException 에러... 형변환이 안됨
-                var group = types.groupBy { "endDate" }
-
-                //형변환
-                var scheduleList_api = group as ArrayList<AddSchedule>
-                //Log.d()로 찍어보고 잘 들어갈 때 scheduleList = scheduleList_api 사용할거라 주석처리함
-//                scheduleList = scheduleList_api
-//                rv_adapter = MainRvAdapter(scheduleList_api)
-                Log.d("DEV", "${scheduleList_api}")
-
-//                if (scheduleList_api.size != 0) {
-//                    for (i : Int in 0 .. scheduleList_api.size) {
-                        //AddSchedule() 형식이 아니라서 참조가 안되던거였음... 수정필요
-//                        scheduleList[i].content = scheduleList_api[i].content
-//                        scheduleList[i].color = scheduleList_api[i].color
-//                        scheduleList[i].memo = scheduleList_api[i].memo
-//                        scheduleList[i].endDate = scheduleList_api[i].endDate
-//                        scheduleList[i].endTime = scheduleList_api[i].endTime
-//                    }
-//                }
             }
         }
     }
