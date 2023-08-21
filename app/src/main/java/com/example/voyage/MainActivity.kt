@@ -85,30 +85,12 @@ class MainActivity : AppCompatActivity() {
             rv_schedule.layoutManager = LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false)
 
-            rv_adapter.notifyDataSetChanged()   //전체 새로고침
         }
-
-        //일정 추가 관련 객체
-        var content: EditText? = findViewById(R.id.content_edt)
-        var color: EditText? = findViewById(R.id.color_edt)
-        var memo: EditText? = findViewById(R.id.memo_edt)
-        var tv_endAt: TextView? = findViewById(R.id.tv_endAt)
 
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
         add.setOnClickListener{
             val intent = Intent(this, AddScheduleScreen :: class.java)
-
-            //일정 추가
-            //scheduleList = scheduleList_api 로 쓸거라 주석처리함
-//            scheduleList.add(AddSchedule(
-//                content?.text.toString(),
-//                color?.text.toString(),
-//                memo?.text.toString(),
-//                s_day,
-//                tv_endAt?.text.toString(),
-//            ))
-
             startActivityForResult(intent, REQUEST_CODE)
         }
 
@@ -149,16 +131,6 @@ class MainActivity : AppCompatActivity() {
                         var endAt : TextView = findViewById(R.id.tv_endAt)
                         endAt.visibility = View.INVISIBLE
                     }
-
-                    //scheduleList = scheduleList_api 로 쓸거라서 주석처리함
-//                    scheduleList[scheduleList.size - 1].content = getContent.toString()
-//                    scheduleList[scheduleList.size - 1].color = getColor.toString()
-//                    scheduleList[scheduleList.size - 1].memo = getMemo.toString()
-//                    scheduleList[scheduleList.size - 1].endDate = s_day
-//                    scheduleList[scheduleList.size - 1].endTime = getEndTime.toString()
-
-                    //확인
-                    Log.d("ASL", "${scheduleList}")
 
                     //서버에 데이터 저장(get)
                     api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
@@ -242,24 +214,26 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 //api에서 data부분 내용을 가져옴
                 val jsonArray : JSONArray = root.optJSONArray("data")
+                var jsonObject : JSONObject
+                //scheduleList 비우기
+                scheduleList.clear()
 
+                //api 일정 불러오기
                 for (index in 0 until jsonArray.length()) {
-                    val jsonObject = jsonArray.getJSONObject(index)
+                    jsonObject = jsonArray.getJSONObject(index)
 
-                    val api_content = jsonObject.getString("content")
-                    val api_color = jsonObject.getString("color")
-                    val api_memo = jsonObject.getString("memo")
-                    val api_endDate = jsonObject.getString("endDate")
-                    val api_endTime = jsonObject.getString("endTime")
+                    val apiContent = jsonObject.getString("content")
+                    val apiColor = jsonObject.getString("color")
+                    val apiMemo = jsonObject.getString("memo")
+                    val apiEndDate = jsonObject.getString("endDate")
+                    val apiEndTime = jsonObject.getString("endTime")
 
-                    var group = AddSchedule(api_content, api_color, api_memo, api_endDate, api_endTime)
-
-                    if (api_endDate == s_day) {
-                        scheduleList.add(group)
-                        // 코드 추가 필요... 일정 불러오고 화면에 띄우는 건 되는데 날짜를 클릭할 때마다 계속 똑같은 일정이 늘어남
-                    }
-
+                    var group = AddSchedule(apiContent, apiColor, apiMemo, apiEndDate, apiEndTime)
+                    //불러온 일정 scheduleList에 저장
+                    scheduleList.add(group)
                 }
+
+                rv_adapter.notifyDataSetChanged()   //전체 새로고침
             }
         }
     }
