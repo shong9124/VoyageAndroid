@@ -12,7 +12,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
-import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.d("onLaunch", "onCreate success")
 
         //날짜 관련 객체 생성
         val dayText: TextView = findViewById(R.id.day_text)
@@ -70,6 +70,10 @@ class MainActivity : AppCompatActivity() {
         //날짜 텍스트뷰에 담기
         dayText.text = dateFormat.format(date)
 
+        rv_schedule.adapter = rv_adapter
+        rv_schedule.layoutManager = LinearLayoutManager(
+            this, LinearLayoutManager.VERTICAL, false)
+
         //CalendarView 날짜 변환 이벤트
         calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
             //날짜 변수에 담기
@@ -80,11 +84,6 @@ class MainActivity : AppCompatActivity() {
             //api 호출
             CallApiThread().start()
             Log.d("ASL", "${scheduleList}")
-
-            rv_schedule.adapter = rv_adapter
-            rv_schedule.layoutManager = LinearLayoutManager(
-                this, LinearLayoutManager.VERTICAL, false)
-
         }
 
         //화면 변환
@@ -93,7 +92,13 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddScheduleScreen :: class.java)
             startActivityForResult(intent, REQUEST_CODE)
         }
+    }
 
+    // onCreate() 이후에 작동
+    override fun onStart() {
+        super.onStart()
+        CallApiThread().start()
+        Log.d("onLaunch", "onStart success")
     }
 
     //화면 전환할 때 데이터 받아 오는 함수..
@@ -101,8 +106,6 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
-
-            Log.d("MDM", "In onActivityResult")
 
             when(requestCode) {
                 REQUEST_CODE -> {
@@ -154,12 +157,13 @@ class MainActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
                             Log.d("log", "post: " + response.toString())
                             Log.d("log", "post: " + response.body().toString())
-//                            Toast.makeText(this@MainActivity, "data saved", Toast.LENGTH_SHORT).show()
                         }
                         override fun onFailure(call: Call<PostModel>, t: Throwable) {
                             Log.d("log", "post: fail to save data")
                         }
                     })
+
+                    Log.d("onLaunch", "In onActivityResult")
 
                     //delete(에러&보류)
 //                    api.deleteSchedule(s_day, "test").enqueue(object: Callback<GetResponse> {
@@ -175,6 +179,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        CallApiThread().start()
+        Log.d("onLaunch", "onResume successㅎ")
     }
 
     //api 호출
@@ -215,9 +225,8 @@ class MainActivity : AppCompatActivity() {
                 //api에서 data부분 내용을 가져옴
                 val jsonArray : JSONArray = root.optJSONArray("data")
                 var jsonObject : JSONObject
-                //scheduleList 비우기
+                //scheduleList 초기화
                 scheduleList.clear()
-
                 //api 일정 불러오기
                 for (index in 0 until jsonArray.length()) {
                     jsonObject = jsonArray.getJSONObject(index)
@@ -232,8 +241,8 @@ class MainActivity : AppCompatActivity() {
                     //불러온 일정 scheduleList에 저장
                     scheduleList.add(group)
                 }
-
                 rv_adapter.notifyDataSetChanged()   //전체 새로고침
+                Log.d("onLaunch", "CallApiThread")
             }
         }
     }
