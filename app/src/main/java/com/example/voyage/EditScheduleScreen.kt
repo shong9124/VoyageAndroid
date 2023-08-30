@@ -18,20 +18,20 @@ import retrofit2.Response
 import java.time.LocalDateTime
 import java.util.ArrayList
 
-class AddScheduleScreen : AppCompatActivity() {
+class EditScheduleScreen : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_schedule_screen)
+        setContentView(R.layout.activity_edit_screen)
 
         //객체 생성
-        val submitSchedule: Button = findViewById(R.id.btn_send_schedule)
-        var content: EditText? = findViewById(R.id.content_edt)
-        var color: EditText? = findViewById(R.id.color_edt)
-        var memo: EditText? = findViewById(R.id.memo_edt)
+        val editSchedule: Button = findViewById(R.id.btn_edit)
+        var content: EditText? = findViewById(R.id.content_edt2)
+        var color: EditText? = findViewById(R.id.color_edt2)
+        var memo: EditText? = findViewById(R.id.memo_edt2)
 
         //timePicker 관련 객체
-        var endAt: TimePicker = findViewById(R.id.tp_endAt)
+        var endAt: TimePicker = findViewById(R.id.tp_endAt2)
         var endTime: String = ""
 
         //timePicker 값 변경 이벤트
@@ -39,16 +39,19 @@ class AddScheduleScreen : AppCompatActivity() {
             endTime = "${hourOfDay}:${minute}"
         }
 
+        content?.setText(scheduleList[MainRvAdapter(scheduleList).itemCount - 1].content)
+        color?.setText(scheduleList[MainRvAdapter(scheduleList).itemCount - 1].color)
+        memo?.setText(scheduleList[MainRvAdapter(scheduleList).itemCount - 1].memo)
+
         //화면 전환
-        submitSchedule.setOnClickListener {
-            val intent = Intent()//this, MainActivity :: class.java)
+        editSchedule.setOnClickListener {
+            val intent = Intent(this, MainActivity :: class.java)
             intent.putExtra("content", content?.text.toString())
             intent.putExtra("color", color?.text.toString())
             intent.putExtra("memo", memo?.text.toString())
             intent.putExtra("endTime", endTime)
 
             setResult(Activity.RESULT_OK, intent)
-
             finish()
         }
     }

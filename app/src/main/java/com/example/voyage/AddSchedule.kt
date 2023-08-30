@@ -28,11 +28,3 @@ data class PostModel(
     val remindTime: String? = null,
     val remindDate: String? = null
 )
-
-data class PostResult(
-    var data : PostModel
-)
-
-data class ScheduleGroup(
-    var group : String
-)

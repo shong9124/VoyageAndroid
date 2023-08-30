@@ -29,6 +29,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.io.BufferedReader
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     val api = testInterface.create()
 
     val REQUEST_CODE = 200
+    val REQUEST_CODE_EDIT = 123
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,6 +96,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //MainRvAdapter에서 사용할 함수(근데 nullPointerException)
+    fun setActivityResult(intent: Intent, requestCode: Int) {
+        startActivityForResult(intent, requestCode)
+    }
+
     // onCreate() 이후에 작동
     override fun onStart() {
         super.onStart()
@@ -106,10 +113,8 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
-
             when(requestCode) {
                 REQUEST_CODE -> {
-
                     //받아온 editText 값들의 text를 추출해서 get어쩌고에 다 넣어줌
                     var getContent = data?.getStringExtra("content")
                     var getColor = data?.getStringExtra("color")
@@ -134,7 +139,6 @@ class MainActivity : AppCompatActivity() {
                         var endAt : TextView = findViewById(R.id.tv_endAt)
                         endAt.visibility = View.INVISIBLE
                     }
-
                     //서버에 데이터 저장(get)
                     api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
                         override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
@@ -147,7 +151,6 @@ class MainActivity : AppCompatActivity() {
                             Log.d("log", "get: fail to save data")
                         }
                     })
-
                     //post
                     val data =
                         PostModel(getContent.toString(), getColor.toString(),
@@ -157,34 +160,39 @@ class MainActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
                             Log.d("log", "post: " + response.toString())
                             Log.d("log", "post: " + response.body().toString())
+                            CallApiThread().start()
                         }
                         override fun onFailure(call: Call<PostModel>, t: Throwable) {
                             Log.d("log", "post: fail to save data")
                         }
                     })
+                }
+                //put으로 main화면에 돌아왔을 때
+                REQUEST_CODE_EDIT -> {
+                    var getContent = data?.getStringExtra("content")
+                    var getColor = data?.getStringExtra("color")
+                    var getMemo = data?.getStringExtra("memo")
+                    var getEndTime = data?.getStringExtra("endTime")
 
-                    Log.d("onLaunch", "In onActivityResult")
+                    var data = PostModel(getContent.toString(), getColor.toString(),
+                        getMemo.toString(), s_day, getEndTime.toString())
 
-                    //delete(에러&보류)
-//                    api.deleteSchedule(s_day, "test").enqueue(object: Callback<GetResponse> {
-//                        override fun onResponse(
-//                            call: Call<GetResponse>,
-//                            response: Response<GetResponse>) {
-//                            Log.d("log", "deleted")
-//                        }
-//                        override fun onFailure(call: Call<GetResponse>, t: Throwable) {
-//                            Log.d("log", "fail to delete")
-//                        }
-//                    })
+                    //put(보류)
+                    api.editSchedule("64240d2c20a07443f9de31fc",
+                        "642bde7f1e337972b4b3d734", data).enqueue(object :
+                        Callback<GetResponse> {
+                        override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
+                            Log.d("API_PUT", "put: " + response.toString())
+                            Log.d("API_PUT", "put: " + response.body().toString())
+                            Log.d("API_PUT", "put: schedule edited successfully")
+                        }
+                        override fun onFailure(call: Call<GetResponse>, t: Throwable) {
+                            Log.d("API_PUT", "put: fail to edit")
+                        }
+                    })
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        CallApiThread().start()
-        Log.d("onLaunch", "onResume successㅎ")
     }
 
     //api 호출
@@ -260,11 +268,18 @@ class MainActivity : AppCompatActivity() {
             @Body jsonparams: PostModel,
         ): Call<PostModel>
 
-        @DELETE("schedule/endAt?ownerId=64240be120a07443f9de31f7")
+        @PUT("schedule?")
+        fun editSchedule(
+            @Query("personalCalenderId") personalCalenderId: String,
+            @Query("personalScheduleId") personalScheduleId: String,
+            @Body jsonparams: PostModel
+        ): Call<GetResponse>
+
+        @DELETE("schedule/{personalCalenderId}/{personalScheduleId}")
         fun deleteSchedule(
-            @Query("date") date: String,
-            @Path("content") content: String
-        )
+            @Path("personalCalenderId") personalCalenderId: String,
+            @Path("personalScheduleId") personalScheduleId: String
+        ): Call<Void>
 
         companion object {
             fun create(): testInterface {
