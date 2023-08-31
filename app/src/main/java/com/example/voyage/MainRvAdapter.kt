@@ -1,7 +1,10 @@
 package com.example.voyage
 
+import android.content.ContentResolver
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import android.view.ContentInfo
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Url
+import java.net.URL
 
 class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Adapter<MainRvAdapter.CustomViewHolder>() {
 
@@ -26,25 +31,28 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
         holder.memo_tv.text = add_schedule[position].memo
         holder.endAt_tv.text = add_schedule[position].endTime
 
+        var content: String? = add_schedule[position].content
+        var color: String? = add_schedule[position].color
+        var memo: String? = add_schedule[position].memo
+        var endTime: String? = add_schedule[position].endTime
+
         holder.itemView.setOnClickListener{
             Log.d("OCL", "schedule[${position}] clicked")
 //            val intent = Intent(holder.itemView.context, EditScheduleScreen :: class.java)
-            //nullPointerException
-//            MainActivity().setActivityResult(intent, MainActivity().REQUEST_CODE_EDIT)
-//            startActivityForResult(MainActivity(), intent, MainActivity().REQUEST_CODE_EDIT, null)
-            //실행은 되는데 데이터를 가져오지 못함
 //            ContextCompat.startActivity(holder.itemView.context, intent, null)
+            var scheduleId = scheduleId
+            Log.d("OCL", "${scheduleId}")
 
             val api = MainActivity().api
-            val data = PostModel("testing PUT", "RED", "for testing PUT", s_day, "17:30")
-            //put(보류)
-            api.editSchedule("64240d2c20a07443f9de31fc", "642bde7f1e337972b4b3d734", data).enqueue(object : Callback<GetResponse> {
-                override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
+            //put(java.lang.IllegalArgumentException 에러)
+            api.editSchedule(scheduleId, content = "testing PUT", color = "RED",
+                memo = "for testing", endDate = s_day, endTime = "22:10").enqueue(object : Callback<PostModel> {
+                override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
                     Log.d("API_PUT", "put: " + response.toString())
                     Log.d("API_PUT", "put: " + response.body().toString())
                     Log.d("API_PUT", "put: schedule edited successfully")
                 }
-                override fun onFailure(call: Call<GetResponse>, t: Throwable) {
+                override fun onFailure(call: Call<PostModel>, t: Throwable) {
                     Log.d("API_PUT", "put: fail to edit")
                 }
             })

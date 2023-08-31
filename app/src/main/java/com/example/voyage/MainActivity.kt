@@ -43,6 +43,7 @@ import kotlin.collections.ArrayList
 var s_day : String = ""
 var scheduleList = ArrayList<AddSchedule>()
 var rv_adapter = MainRvAdapter(scheduleList)
+var scheduleId : String = ""
 
 class MainActivity : AppCompatActivity() {
 
@@ -174,19 +175,20 @@ class MainActivity : AppCompatActivity() {
                     var getMemo = data?.getStringExtra("memo")
                     var getEndTime = data?.getStringExtra("endTime")
 
-                    var data = PostModel(getContent.toString(), getColor.toString(),
-                        getMemo.toString(), s_day, getEndTime.toString())
+                    var scheduleId = CallApiThread().getId().toString()
 
                     //put(보류)
-                    api.editSchedule("64240d2c20a07443f9de31fc",
-                        "642bde7f1e337972b4b3d734", data).enqueue(object :
-                        Callback<GetResponse> {
-                        override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
+                    api.editSchedule(scheduleId, getContent, getColor, getMemo, s_day, getEndTime).enqueue(object :
+                        Callback<PostModel> {
+                        override fun onResponse(
+                            call: Call<PostModel>,
+                            response: Response<PostModel>
+                        ) {
                             Log.d("API_PUT", "put: " + response.toString())
                             Log.d("API_PUT", "put: " + response.body().toString())
                             Log.d("API_PUT", "put: schedule edited successfully")
                         }
-                        override fun onFailure(call: Call<GetResponse>, t: Throwable) {
+                        override fun onFailure(call: Call<PostModel>, t: Throwable) {
                             Log.d("API_PUT", "put: fail to edit")
                         }
                     })
@@ -197,7 +199,6 @@ class MainActivity : AppCompatActivity() {
 
     //api 호출
     inner class CallApiThread : Thread() {
-
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
             var testDate = s_day
@@ -223,6 +224,18 @@ class MainActivity : AppCompatActivity() {
             } while (str != null)
 
             val root = JSONObject(buf.toString())
+            val jsonArray : JSONArray = root.optJSONArray("data")
+            //api에서 data부분 내용을 가져옴
+            var jsonObject : JSONObject
+
+            fun getId() {
+                for (index in 0 until jsonArray.length()) {
+                    jsonObject = jsonArray.getJSONObject(index)
+                    val id = jsonObject.getString("id")
+                    scheduleId = id
+                }
+            }
+            getId()
 
             Log.d(Companion.TAG, "root: $root")
             Log.d(Companion.TAG, "code: ${root.get("code")}")
@@ -230,9 +243,6 @@ class MainActivity : AppCompatActivity() {
 
             //Ui 접근 가능하게 함 -> 메인스레드에서 동작
             runOnUiThread {
-                //api에서 data부분 내용을 가져옴
-                val jsonArray : JSONArray = root.optJSONArray("data")
-                var jsonObject : JSONObject
                 //scheduleList 초기화
                 scheduleList.clear()
                 //api 일정 불러오기
@@ -250,7 +260,6 @@ class MainActivity : AppCompatActivity() {
                     scheduleList.add(group)
                 }
                 rv_adapter.notifyDataSetChanged()   //전체 새로고침
-                Log.d("onLaunch", "CallApiThread")
             }
         }
     }
@@ -268,12 +277,15 @@ class MainActivity : AppCompatActivity() {
             @Body jsonparams: PostModel,
         ): Call<PostModel>
 
-        @PUT("schedule?")
+        @PUT("schedule?personalCalenderId=64240d2c20a07443f9de31fc")
         fun editSchedule(
-            @Query("personalCalenderId") personalCalenderId: String,
             @Query("personalScheduleId") personalScheduleId: String,
-            @Body jsonparams: PostModel
-        ): Call<GetResponse>
+            @Body content: String?,
+            color: String?,
+            memo: String?,
+            endDate: String,
+            endTime: String?
+        ): Call<PostModel>
 
         @DELETE("schedule/{personalCalenderId}/{personalScheduleId}")
         fun deleteSchedule(
