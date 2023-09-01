@@ -71,9 +71,24 @@
         app:iconTint="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.287"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/memo_edt2"
-        app:layout_constraintVertical_bias="0.84"
+        app:layout_constraintVertical_bias="0.837"
+        app:rippleColor="#00BCD4" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="delete"
+        app:iconTint="#00BCD4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.311"
+        app:layout_constraintStart_toEndOf="@+id/btn_edit"
+        app:layout_constraintTop_toBottomOf="@+id/memo_edt2"
+        app:layout_constraintVertical_bias="0.834"
         app:rippleColor="#00BCD4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

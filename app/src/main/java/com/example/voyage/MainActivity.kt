@@ -88,18 +88,18 @@ class MainActivity : AppCompatActivity() {
             CallApiThread().start()
             Log.d("ASL", "${scheduleList}")
         }
-
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
         add.setOnClickListener{
             val intent = Intent(this, AddScheduleScreen :: class.java)
             startActivityForResult(intent, REQUEST_CODE)
         }
-    }
-
-    //MainRvAdapter에서 사용할 함수(근데 nullPointerException)
-    fun setActivityResult(intent: Intent, requestCode: Int) {
-        startActivityForResult(intent, requestCode)
+        //일정 클릭 이벤트(PUT)
+        rv_adapter.setItemClickListener(object: MainRvAdapter.OnItemClickListener{
+            override fun onClick(v: View, position: Int) {
+                goToEditScheduleScreen()
+            }
+        })
     }
 
     // onCreate() 이후에 작동
@@ -109,10 +109,14 @@ class MainActivity : AppCompatActivity() {
         Log.d("onLaunch", "onStart success")
     }
 
+    fun goToEditScheduleScreen() {
+        val intent = Intent(this, EditScheduleScreen :: class.java)
+        startActivityForResult(intent, REQUEST_CODE_EDIT)
+    }
+
     //화면 전환할 때 데이터 받아 오는 함수..
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == Activity.RESULT_OK) {
             when(requestCode) {
                 REQUEST_CODE -> {
@@ -153,8 +157,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     })
                     //post
-                    val data =
-                        PostModel(getContent.toString(), getColor.toString(),
+                    val data = PostModel(getContent.toString(), getColor.toString(),
                             getMemo.toString(), s_day, getEndTime.toString())
 
                     api.postSchedule(data).enqueue(object : Callback<PostModel> {
@@ -175,18 +178,17 @@ class MainActivity : AppCompatActivity() {
                     var getMemo = data?.getStringExtra("memo")
                     var getEndTime = data?.getStringExtra("endTime")
 
-                    var scheduleId = CallApiThread().getId().toString()
+                    var data = PostModel(getContent.toString(), getColor.toString(),
+                        getMemo.toString(), s_day, getEndTime.toString())
 
-                    //put(보류)
-                    api.editSchedule(scheduleId, getContent, getColor, getMemo, s_day, getEndTime).enqueue(object :
-                        Callback<PostModel> {
-                        override fun onResponse(
-                            call: Call<PostModel>,
-                            response: Response<PostModel>
-                        ) {
+                    //put
+                    api.editSchedule("64240d2c20a07443f9de31fc", scheduleId, data)
+                        .enqueue(object : Callback<PostModel> {
+                        override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
                             Log.d("API_PUT", "put: " + response.toString())
                             Log.d("API_PUT", "put: " + response.body().toString())
                             Log.d("API_PUT", "put: schedule edited successfully")
+                            CallApiThread().start()
                         }
                         override fun onFailure(call: Call<PostModel>, t: Throwable) {
                             Log.d("API_PUT", "put: fail to edit")
@@ -277,14 +279,11 @@ class MainActivity : AppCompatActivity() {
             @Body jsonparams: PostModel,
         ): Call<PostModel>
 
-        @PUT("schedule?personalCalenderId=64240d2c20a07443f9de31fc")
+        @PUT("schedule?")
         fun editSchedule(
+            @Query("personalCalenderId") personalCalenderId: String,
             @Query("personalScheduleId") personalScheduleId: String,
-            @Body content: String?,
-            color: String?,
-            memo: String?,
-            endDate: String,
-            endTime: String?
+            @Body postModel: PostModel
         ): Call<PostModel>
 
         @DELETE("schedule/{personalCalenderId}/{personalScheduleId}")
