@@ -44,6 +44,7 @@ var s_day : String = ""
 var scheduleList = ArrayList<AddSchedule>()
 var rv_adapter = MainRvAdapter(scheduleList)
 var scheduleId : String = ""
+var indexOfSchedule : Int = 0
 
 class MainActivity : AppCompatActivity() {
 
@@ -97,6 +98,7 @@ class MainActivity : AppCompatActivity() {
         //일정 클릭 이벤트(PUT)
         rv_adapter.setItemClickListener(object: MainRvAdapter.OnItemClickListener{
             override fun onClick(v: View, position: Int) {
+                CallApiThread().getId()
                 goToEditScheduleScreen()
             }
         })
@@ -231,11 +233,9 @@ class MainActivity : AppCompatActivity() {
             var jsonObject : JSONObject
 
             fun getId() {
-                for (index in 0 until jsonArray.length()) {
-                    jsonObject = jsonArray.getJSONObject(index)
-                    val id = jsonObject.getString("id")
-                    scheduleId = id
-                }
+                jsonObject = jsonArray.getJSONObject(indexOfSchedule)
+                var id = jsonObject.getString("id")
+                scheduleId = id
             }
             getId()
 

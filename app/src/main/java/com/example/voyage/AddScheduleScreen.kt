@@ -5,18 +5,11 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.TimePicker
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.time.LocalDateTime
-import java.util.ArrayList
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 
 class AddScheduleScreen : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -29,6 +22,24 @@ class AddScheduleScreen : AppCompatActivity() {
         var content: EditText? = findViewById(R.id.content_edt)
         var color: EditText? = findViewById(R.id.color_edt)
         var memo: EditText? = findViewById(R.id.memo_edt)
+        val sendFragment: Button = findViewById(R.id.btn_send_fragment)
+
+        //fragment로 보내기
+        sendFragment.setOnClickListener {
+            val bundle: Bundle = Bundle()
+            val message: String = color?.text.toString()
+            //데이터 담기
+            bundle.putString("message", message)
+            //fragment 선언
+            val fragment: ColorPalette = ColorPalette()
+            //fragment에 데이터 넘기기
+            fragment.arguments = bundle
+            //fragment 추가, 변경, 삭제 기능
+            val manager: FragmentManager = supportFragmentManager
+            val transaction: FragmentTransaction = manager.beginTransaction()
+            //fragment 화면 보여주기
+            transaction.replace(R.id.frameLayout, fragment).commit()
+        }
 
         //timePicker 관련 객체
         var endAt: TimePicker = findViewById(R.id.tp_endAt)

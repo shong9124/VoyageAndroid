@@ -1,22 +1,11 @@
 package com.example.voyage
 
-import android.content.ContentResolver
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
-import android.view.ContentInfo
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.http.Url
-import java.net.URL
 
 class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Adapter<MainRvAdapter.CustomViewHolder>() {
 
@@ -31,6 +20,7 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
         holder.endAt_tv.text = add_schedule[position].endTime
         //일정 클릭 이벤트
         holder.itemView.setOnClickListener{
+            indexOfSchedule = position
             var scheduleId = scheduleId
             Log.d("OCL", "${scheduleId}")
             itemClickListener.onClick(it, position)
