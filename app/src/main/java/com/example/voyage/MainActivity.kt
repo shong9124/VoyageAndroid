@@ -123,27 +123,27 @@ class MainActivity : AppCompatActivity() {
             when(requestCode) {
                 REQUEST_CODE -> {
                     //받아온 editText 값들의 text를 추출해서 get어쩌고에 다 넣어줌
-                    var getContent = data?.getStringExtra("content")
-                    var getColor = data?.getStringExtra("color")
-                    var getMemo = data?.getStringExtra("memo")
-                    var getEndTime = data?.getStringExtra("endTime")
+                    val getContent = data?.getStringExtra("content")
+                    val getColor = data?.getStringExtra("color")
+                    val getMemo = data?.getStringExtra("memo")
+                    val getEndTime = data?.getStringExtra("endTime")
 
                     //입력값이 없을 경우
                     if (getContent == null) {
-                        var content_tv : TextView = findViewById(R.id.tv_content)
+                        val content_tv : TextView = findViewById(R.id.tv_content)
                         content_tv.visibility = View.INVISIBLE
                     }
                     if (getColor == null) {
-                        var color_tv : TextView = findViewById(R.id.tv_color)
+                        val color_tv : TextView = findViewById(R.id.tv_color)
                         color_tv.visibility = View.INVISIBLE
                     }
                     if (getMemo == null) {
-                        var memo_tv : TextView = findViewById(R.id.tv_memo)
+                        val memo_tv : TextView = findViewById(R.id.tv_memo)
                         memo_tv.visibility = View.INVISIBLE
                     }
                     //시간 변경값이 없을 경우
                     if (getEndTime == null) {
-                        var endAt : TextView = findViewById(R.id.tv_endAt)
+                        val endAt : TextView = findViewById(R.id.tv_endAt)
                         endAt.visibility = View.INVISIBLE
                     }
                     //서버에 데이터 저장(get)
@@ -175,13 +175,15 @@ class MainActivity : AppCompatActivity() {
                 }
                 //put으로 main화면에 돌아왔을 때
                 REQUEST_CODE_EDIT -> {
-                    var getContent = data?.getStringExtra("content")
-                    var getColor = data?.getStringExtra("color")
-                    var getMemo = data?.getStringExtra("memo")
-                    var getEndTime = data?.getStringExtra("endTime")
+                    val getContent = data?.getStringExtra("content")
+                    val getColor = data?.getStringExtra("color")
+                    val getMemo = data?.getStringExtra("memo")
+                    val getEndTime = data?.getStringExtra("endTime")
 
-                    var data = PostModel(getContent.toString(), getColor.toString(),
+                    val data = PostModel(getContent.toString(), getColor.toString(),
                         getMemo.toString(), s_day, getEndTime.toString())
+
+                    CallApiThread().getId()
 
                     //put
                     api.editSchedule("64240d2c20a07443f9de31fc", scheduleId, data)
@@ -205,10 +207,10 @@ class MainActivity : AppCompatActivity() {
     inner class CallApiThread : Thread() {
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
-            var testDate = s_day
+            val testDate = s_day
             val testUserId = "64240be120a07443f9de31f7"
 
-            var url =
+            val url =
                 URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
 
             val conn = url.openConnection()
@@ -233,11 +235,12 @@ class MainActivity : AppCompatActivity() {
             var jsonObject : JSONObject
 
             fun getId() {
-                jsonObject = jsonArray.getJSONObject(indexOfSchedule)
-                var id = jsonObject.getString("id")
-                scheduleId = id
+                if (jsonArray.length() != 0) {
+                    val json_Object : JSONObject = jsonArray.getJSONObject(indexOfSchedule)
+                    val id = json_Object.getString("id")
+                    scheduleId = id
+                }
             }
-            getId()
 
             Log.d(Companion.TAG, "root: $root")
             Log.d(Companion.TAG, "code: ${root.get("code")}")
@@ -257,11 +260,12 @@ class MainActivity : AppCompatActivity() {
                     val apiEndDate = jsonObject.getString("endDate")
                     val apiEndTime = jsonObject.getString("endTime")
 
-                    var group = AddSchedule(apiContent, apiColor, apiMemo, apiEndDate, apiEndTime)
+                    val group = AddSchedule(apiContent, apiColor, apiMemo, apiEndDate, apiEndTime)
                     //불러온 일정 scheduleList에 저장
                     scheduleList.add(group)
                 }
                 rv_adapter.notifyDataSetChanged()   //전체 새로고침
+                getId()
             }
         }
     }
