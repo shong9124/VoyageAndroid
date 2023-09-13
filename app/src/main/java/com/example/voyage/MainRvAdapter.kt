@@ -22,7 +22,6 @@ class MainRvAdapter (var add_schedule: ArrayList<AddSchedule>) : RecyclerView.Ad
         holder.itemView.setOnClickListener{
             indexOfSchedule = position
             Log.d("OCL", "${indexOfSchedule}")
-            val scheduleId = scheduleId
             Log.d("OCL", "${scheduleId}")
             itemClickListener.onClick(it, position)
         }

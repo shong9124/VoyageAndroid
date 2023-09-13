@@ -41,10 +41,6 @@ class EditScheduleScreen : AppCompatActivity() {
             endTime = "${hourOfDay}:${minute}"
         }
 
-//        content?.setText(scheduleList[MainRvAdapter(scheduleList).itemCount - 1].content)
-//        color?.setText(scheduleList[MainRvAdapter(scheduleList).itemCount - 1].color)
-//        memo?.setText(scheduleList[MainRvAdapter(scheduleList).itemCount - 1].memo)
-
         //화면 전환
         editSchedule.setOnClickListener {
             val intent = Intent(this, MainActivity :: class.java)
@@ -58,13 +54,12 @@ class EditScheduleScreen : AppCompatActivity() {
         }
         //일정 삭제
         deleteSchedule.setOnClickListener {
-            var id = MainActivity().CallApiThread().getId()
             val api = MainActivity().api
             //delete
             api.deleteSchedule("64240d2c20a07443f9de31fc", scheduleId)
                 .enqueue(object: Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                        Log.d("DELETE", "delete: " + response.toString())
+                        Log.d("DELETE", "delete: $response")
                         Toast.makeText(this@EditScheduleScreen,
                             "schedule deleted", Toast.LENGTH_SHORT).show()
                         MainActivity().CallApiThread().start()

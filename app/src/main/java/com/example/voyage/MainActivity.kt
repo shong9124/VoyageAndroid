@@ -45,13 +45,12 @@ var scheduleList = ArrayList<AddSchedule>()
 var rv_adapter = MainRvAdapter(scheduleList)
 var scheduleId : String = ""
 var indexOfSchedule : Int = 0
+const val REQUEST_CODE = 200
+const val REQUEST_CODE_EDIT = 123
 
 class MainActivity : AppCompatActivity() {
 
     val api = testInterface.create()
-
-    val REQUEST_CODE = 200
-    val REQUEST_CODE_EDIT = 123
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
             //api 호출
             CallApiThread().start()
-            Log.d("ASL", "${scheduleList}")
+            Log.d("ASL", "$scheduleList")
         }
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
@@ -95,10 +94,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddScheduleScreen :: class.java)
             startActivityForResult(intent, REQUEST_CODE)
         }
-        //일정 클릭 이벤트(PUT)
+        //일정 클릭 이벤트(PUT&DELETE)
         rv_adapter.setItemClickListener(object: MainRvAdapter.OnItemClickListener{
             override fun onClick(v: View, position: Int) {
-                CallApiThread().getId()
+                CallApiThread().start()
+                Log.d("clicked", "${CallApiThread().id}")
+                Log.d("clicked", "$indexOfSchedule")
                 goToEditScheduleScreen()
             }
         })
@@ -150,7 +151,7 @@ class MainActivity : AppCompatActivity() {
                     api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
                         override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
                             if(response.isSuccessful()) {
-                                Log.d("log", "get: " + response.toString())
+                                Log.d("log", "get: $response")
                                 Log.d("log", "get: " + response.body().toString())
                             }
                         }
@@ -164,7 +165,7 @@ class MainActivity : AppCompatActivity() {
 
                     api.postSchedule(data).enqueue(object : Callback<PostModel> {
                         override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
-                            Log.d("log", "post: " + response.toString())
+                            Log.d("log", "post: $response")
                             Log.d("log", "post: " + response.body().toString())
                             CallApiThread().start()
                         }
@@ -182,8 +183,6 @@ class MainActivity : AppCompatActivity() {
 
                     val data = PostModel(getContent.toString(), getColor.toString(),
                         getMemo.toString(), s_day, getEndTime.toString())
-
-                    CallApiThread().getId()
 
                     //put
                     api.editSchedule("64240d2c20a07443f9de31fc", scheduleId, data)
@@ -204,7 +203,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //api 호출
-    inner class CallApiThread : Thread() {
+    open inner class CallApiThread : Thread() {
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
             val testDate = s_day
@@ -223,7 +222,6 @@ class MainActivity : AppCompatActivity() {
 
             do {
                 str = br.readLine()
-
                 if (str != null) {
                     buf.append(str)
                 }
@@ -233,12 +231,14 @@ class MainActivity : AppCompatActivity() {
             val jsonArray : JSONArray = root.optJSONArray("data")
             //api에서 data부분 내용을 가져옴
             var jsonObject : JSONObject
-
+            //일정의 id를 가져오는 함수
             fun getId() {
                 if (jsonArray.length() != 0) {
-                    val json_Object : JSONObject = jsonArray.getJSONObject(indexOfSchedule)
-                    val id = json_Object.getString("id")
+                    val jso : JSONObject = jsonArray.getJSONObject(indexOfSchedule)
+                    Log.d("getId", "$indexOfSchedule")
+                    val id : String = jso.getString("id")
                     scheduleId = id
+                    indexOfSchedule = 0
                 }
             }
 
@@ -246,11 +246,12 @@ class MainActivity : AppCompatActivity() {
             Log.d(Companion.TAG, "code: ${root.get("code")}")
             Log.d(Companion.TAG, "data: ${root.get("data")}")
 
-            //Ui 접근 가능하게 함 -> 메인스레드에서 동작
+            //Ui 접근 가능하게 함 -> 메인스레드에서 동작(=CallApiThread)
             runOnUiThread {
                 //scheduleList 초기화
                 scheduleList.clear()
-                //api 일정 불러오기
+                getId()
+                //api 일정 불러 오기
                 for (index in 0 until jsonArray.length()) {
                     jsonObject = jsonArray.getJSONObject(index)
 
@@ -265,7 +266,6 @@ class MainActivity : AppCompatActivity() {
                     scheduleList.add(group)
                 }
                 rv_adapter.notifyDataSetChanged()   //전체 새로고침
-                getId()
             }
         }
     }
