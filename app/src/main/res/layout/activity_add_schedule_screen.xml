@@ -51,6 +51,22 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_creator="@+id/tp_endAt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            tools:context=".ColorPalette"
+            tools:layout_editor_absoluteY="405dp">
+        </FrameLayout>
+    </LinearLayout>
+
     <EditText
         android:id="@+id/content_edt"
         android:layout_width="340dp"

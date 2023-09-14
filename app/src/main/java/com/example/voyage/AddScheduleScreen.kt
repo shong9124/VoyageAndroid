@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.TimePicker
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class AddScheduleScreen : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -19,9 +20,9 @@ class AddScheduleScreen : AppCompatActivity() {
 
         //객체 생성
         val submitSchedule: Button = findViewById(R.id.btn_send_schedule)
-        var content: EditText? = findViewById(R.id.content_edt)
-        var color: EditText? = findViewById(R.id.color_edt)
-        var memo: EditText? = findViewById(R.id.memo_edt)
+        val content: EditText? = findViewById(R.id.content_edt)
+        val color: EditText? = findViewById(R.id.color_edt)
+        val memo: EditText? = findViewById(R.id.memo_edt)
         val sendFragment: Button = findViewById(R.id.btn_send_fragment)
 
         //fragment로 보내기
@@ -31,14 +32,13 @@ class AddScheduleScreen : AppCompatActivity() {
             //데이터 담기
             bundle.putString("message", message)
             //fragment 선언
-            val fragment: ColorPalette = ColorPalette()
+            val fragment = ColorPalette()
             //fragment에 데이터 넘기기
             fragment.arguments = bundle
             //fragment 추가, 변경, 삭제 기능
             val manager: FragmentManager = supportFragmentManager
-            val transaction: FragmentTransaction = manager.beginTransaction()
             //fragment 화면 보여주기
-            transaction.replace(R.id.frameLayout, fragment).commit()
+            fragment.show(manager, fragment.tag)
         }
 
         //timePicker 관련 객체
