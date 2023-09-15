@@ -3,16 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    tools:context=".ColorPalette" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ColorPalette">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="choose color"
-        android:textSize="16dp"
-        android:textColor="@color/black"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"/>
+        android:id="@+id/myToolBar"
+        app:title="Pick a color"/>
 
     <TextView
         android:id="@+id/tv_fragment"
@@ -22,20 +20,115 @@
         android:textSize="20dp"
         android:textColor="@color/black"
         android:textFontWeight="10"
-        android:layout_marginLeft="130dp"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="170dp"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:text="click"
-        android:textColor="@color/black"
-        android:layout_marginTop="40dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="60dp"
         android:layout_marginRight="10dp"
-        android:backgroundTint="@color/white"
-        >
+        android:id="@+id/redBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/red"
+        android:text="."
+        android:textColor="@color/red" />
 
-    </Button>
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/orangeBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/orange"
+        android:text="."
+        android:textColor="@color/orange" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="180dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/yellowBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/yellow_300"
+        android:text="."
+        android:textColor="@color/yellow_300" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="260dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/greenBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/green_200"
+        android:text="."
+        android:textColor="@color/green_200" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="340dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/deepGreenBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/green_700"
+        android:text="."
+        android:textColor="@color/green_700" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/blueBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/blue_200"
+        android:text="."
+        android:textColor="@color/blue_200" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/deepBlueBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/blue_700"
+        android:text="."
+        android:textColor="@color/blue_700" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="180dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/brownBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/brown"
+        android:text="."
+        android:textColor="@color/brown" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="260dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/grayBtn"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/gray"
+        android:text="."
+        android:textColor="@color/gray" />
 
 </FrameLayout>

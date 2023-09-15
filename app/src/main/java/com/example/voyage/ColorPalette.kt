@@ -9,10 +9,14 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ColorPalette : BottomSheetDialogFragment() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         val view: View = inflater.inflate(R.layout.fragment_color_palette, container, false)
         val tvFragment: TextView = view.findViewById(R.id.tv_fragment)
