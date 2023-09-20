@@ -1,6 +1,7 @@
 package com.example.voyage
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,14 @@ import android.widget.Button
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ColorPalette : BottomSheetDialogFragment() {
+    lateinit var sendColor: CallBack
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        //초기화
+        sendColor = context as CallBack
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -34,38 +43,47 @@ class ColorPalette : BottomSheetDialogFragment() {
 
         redBtn.setOnClickListener {
             color = "RED"
+            sendColor.callBackExample("RED")
             dismiss()
         }
         orangeBtn.setOnClickListener {
             color = "ORANGE"
+            sendColor.callBackExample("ORANGE")
             dismiss()
         }
         yellowBtn.setOnClickListener {
             color = "YELLOW"
+            sendColor.callBackExample("YELLOW")
             dismiss()
         }
         greenBtn.setOnClickListener {
             color = "GREEN"
+            sendColor.callBackExample("GREEN")
             dismiss()
         }
         deepGreenBtn.setOnClickListener {
             color = "DEEP GREEN"
+            sendColor.callBackExample("DEEP GREEN")
             dismiss()
         }
         blueBtn.setOnClickListener {
             color = "BLUE"
+            sendColor.callBackExample("BLUE")
             dismiss()
         }
         deepBlueBtn.setOnClickListener {
             color = "DEEP BLUE"
+            sendColor.callBackExample("DEEP BLUE")
             dismiss()
         }
         brownBtn.setOnClickListener {
             color = "BROWN"
+            sendColor.callBackExample("BROWN")
             dismiss()
         }
         grayBtn.setOnClickListener {
             color = "GRAY"
+            sendColor.callBackExample("GRAY")
             dismiss()
         }
 

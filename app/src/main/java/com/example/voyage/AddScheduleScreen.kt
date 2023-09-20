@@ -17,7 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 var color: String? = "NULL"
 
-class AddScheduleScreen : AppCompatActivity(){
+class AddScheduleScreen : AppCompatActivity(), CallBack {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +35,13 @@ class AddScheduleScreen : AppCompatActivity(){
             val fragment = ColorPalette()
             //fragment 추가, 변경, 삭제 기능
             val manager: FragmentManager = supportFragmentManager
+            val transaction: FragmentTransaction = manager.beginTransaction()
+            //fragment 추가
+            transaction.add(R.id.frameLayout, fragment)
+            //적용
+            transaction.commit()
             //fragment 화면 보여주기
-            fragment.show(manager, fragment.tag)
+//            fragment.show(manager, fragment.tag)
         }
 
         //timePicker 관련 객체
@@ -60,8 +65,11 @@ class AddScheduleScreen : AppCompatActivity(){
 
             finish()
         }
+    }
+    override fun callBackExample(msg: String) {
+        val colorBtn : Button = findViewById(R.id.btn_palette)
 
-        if (color == "RED") {
+        if (msg == "RED") {
             colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.red))
         }
     }

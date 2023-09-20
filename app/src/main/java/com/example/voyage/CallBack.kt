@@ -1,5 +1,5 @@
 package com.example.voyage
 
 interface CallBack {
-    fun callBackExample()
+    fun callBackExample(msg: String)
 }
