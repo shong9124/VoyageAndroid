@@ -35,13 +35,13 @@ class AddScheduleScreen : AppCompatActivity(), CallBack {
             val fragment = ColorPalette()
             //fragment 추가, 변경, 삭제 기능
             val manager: FragmentManager = supportFragmentManager
-            val transaction: FragmentTransaction = manager.beginTransaction()
+//            val transaction: FragmentTransaction = manager.beginTransaction()
             //fragment 추가
-            transaction.add(R.id.frameLayout, fragment)
+//            transaction.add(R.id.frameLayout, fragment)
             //적용
-            transaction.commit()
+//            transaction.commit()
             //fragment 화면 보여주기
-//            fragment.show(manager, fragment.tag)
+            fragment.show(manager, fragment.tag)
         }
 
         //timePicker 관련 객체
@@ -71,6 +71,30 @@ class AddScheduleScreen : AppCompatActivity(), CallBack {
 
         if (msg == "RED") {
             colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.red))
+        }
+        if (msg == "ORANGE") {
+            colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.orange))
+        }
+        if (msg == "YELLOW") {
+            colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.yellow_300))
+        }
+        if (msg == "GREEN") {
+            colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.green_200))
+        }
+        if (msg == "DEEP GREEN") {
+            colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.green_700))
+        }
+        if (msg == "BLUE") {
+            colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.blue_200))
+        }
+        if (msg == "DEEP BLUE") {
+            colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.blue_700))
+        }
+        if (msg == "BROWN") {
+            colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.brown))
+        }
+        if (msg == "GRAY") {
+            colorBtn.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.gray))
         }
     }
 }
