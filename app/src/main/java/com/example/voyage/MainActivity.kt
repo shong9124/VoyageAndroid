@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.CalendarView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -88,6 +89,12 @@ class MainActivity : AppCompatActivity() {
             CallApiThread().start()
             Log.d("ASL", "$scheduleList")
         }
+
+        //CalendarView 일정이 있는 날 표시
+        if (scheduleList[0] != null) {
+            TODO() // decorate 함수 짜기...
+        }
+
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
         add.setOnClickListener{
