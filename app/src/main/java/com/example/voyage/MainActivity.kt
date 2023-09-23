@@ -91,8 +91,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         //CalendarView 일정이 있는 날 표시
-        if (scheduleList[0] != null) {
-            TODO() // decorate 함수 짜기...
+        if (scheduleList.size > 0) {
+            calendarView.setSelectedDateVerticalBar(getDrawable(R.drawable.round_icon))
         }
 
         //화면 변환
@@ -130,30 +130,12 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when(requestCode) {
                 REQUEST_CODE -> {
-                    //받아온 editText 값들의 text를 추출해서 get어쩌고에 다 넣어줌
+                    //받아온 editText 값들의 text 를 추출 해서 get 어쩌고에 다 넣어줌
                     val getContent = data?.getStringExtra("content")
                     val getColor = data?.getStringExtra("color")
                     val getMemo = data?.getStringExtra("memo")
                     val getEndTime = data?.getStringExtra("endTime")
 
-                    //입력값이 없을 경우
-                    if (getContent == null) {
-                        val content_tv : TextView = findViewById(R.id.tv_content)
-                        content_tv.visibility = View.INVISIBLE
-                    }
-                    if (getColor == null) {
-                        val color_tv : TextView = findViewById(R.id.tv_color)
-                        color_tv.visibility = View.INVISIBLE
-                    }
-                    if (getMemo == null) {
-                        val memo_tv : TextView = findViewById(R.id.tv_memo)
-                        memo_tv.visibility = View.INVISIBLE
-                    }
-                    //시간 변경값이 없을 경우
-                    if (getEndTime == null) {
-                        val endAt : TextView = findViewById(R.id.tv_endAt)
-                        endAt.visibility = View.INVISIBLE
-                    }
                     //서버에 데이터 저장(get)
                     api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
                         override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
@@ -269,6 +251,7 @@ class MainActivity : AppCompatActivity() {
                     val apiEndTime = jsonObject.getString("endTime")
 
                     val group = AddSchedule(apiContent, apiColor, apiMemo, apiEndDate, apiEndTime)
+
                     //불러온 일정 scheduleList에 저장
                     scheduleList.add(group)
                 }

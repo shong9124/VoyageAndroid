@@ -42,9 +42,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:text=" Pick a Color "
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textColor="@color/black"
             android:background="@drawable/item_border"/>
 
@@ -98,12 +98,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="submit"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/blue_200"
         app:iconTint="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/memo_edt"
-        app:layout_constraintVertical_bias="0.84"
-        app:rippleColor="#00BCD4" />
+        app:layout_constraintVertical_bias="0.84" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,19 +3,15 @@ package com.example.voyage
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TimePicker
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-var color: String? = "NULL"
+var color: String = "BLUE"
 
 class AddScheduleScreen : AppCompatActivity(), CallBack {
     @SuppressLint("MissingInflatedId")
@@ -29,7 +25,7 @@ class AddScheduleScreen : AppCompatActivity(), CallBack {
         val colorBtn: Button = findViewById(R.id.btn_palette)
         val memo: EditText? = findViewById(R.id.memo_edt)
 
-        //fragment로 보내기
+        //fragment 로 보내기
         colorBtn.setOnClickListener {
             //fragment 선언
             val fragment = ColorPalette()
@@ -40,13 +36,13 @@ class AddScheduleScreen : AppCompatActivity(), CallBack {
 //            transaction.add(R.id.frameLayout, fragment)
             //적용
 //            transaction.commit()
-            //fragment 화면 보여주기
+            //fragment 화면 보여 주기
             fragment.show(manager, fragment.tag)
         }
 
         //timePicker 관련 객체
         val endAt: TimePicker = findViewById(R.id.tp_endAt)
-        var endTime: String = ""
+        var endTime = ""
 
         //timePicker 값 변경 이벤트
         endAt.setOnTimeChangedListener{ endAt, hourOfDay, minute ->
