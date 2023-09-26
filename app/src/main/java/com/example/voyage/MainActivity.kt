@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
+import android.widget.CalendarView.OnDateChangeListener
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -19,6 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
@@ -53,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
     val api = testInterface.create()
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -61,38 +65,43 @@ class MainActivity : AppCompatActivity() {
 
         //날짜 관련 객체 생성
         val dayText: TextView = findViewById(R.id.day_text)
-        val calendarView: CalendarView = findViewById(R.id.calendarView)
+        val calendarView: MaterialCalendarView = findViewById(R.id.calendarView)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
         //날짜 형태
         val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
 
         //date 타입(오늘 날짜)
-        val date: Date = Date(calendarView.date)
-        s_day = dateFormat.format(date)
-
-        //날짜 텍스트뷰에 담기
-        dayText.text = dateFormat.format(date)
-
+        calendarView.setSelectedDate(CalendarDay.today())
+        s_day = calendarView.selectedDate?.date.toString()
+        //날짜 textView 에 담기
+        dayText.text = s_day
+        //recyclerView adapter 연결
         rv_schedule.adapter = rv_adapter
         rv_schedule.layoutManager = LinearLayoutManager(
             this, LinearLayoutManager.VERTICAL, false)
 
         //CalendarView 날짜 변환 이벤트
-        calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
-            //날짜 변수에 담기
-            s_day = "${year}-%02d-%02d".format(month + 1, dayOfMonth)
-            //변수 텍스트뷰에 담기
-            dayText.text = s_day
+        calendarView.setOnDateChangedListener(object: OnDateSelectedListener {
+            override fun onDateSelected(widget: MaterialCalendarView, date: CalendarDay, selected: Boolean) {
+                val sYear : Int = date.date.year
+                val sMonth : Int = date.month
+                val sDay : Int = date.day
+                val sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
+                s_day = sDate
 
-            //api 호출
-            CallApiThread().start()
-            Log.d("ASL", "$scheduleList")
-        }
+                //날짜 텍스트뷰에 담기
+                dayText.text = s_day
+                //api 호출
+                CallApiThread().start()
+                Log.d("ASL", "$scheduleList")
+            }
+        })
 
         //CalendarView 일정이 있는 날 표시
         if (scheduleList.size > 0) {
-            calendarView.setSelectedDateVerticalBar(getDrawable(R.drawable.round_icon))
+            val date = s_day as CalendarDay
+            calendarView.addDecorator(EventDecorator(Collections.singleton(date)))
         }
 
         //화면 변환
@@ -139,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                     //서버에 데이터 저장(get)
                     api.getSchedule(s_day).enqueue(object: Callback<GetResponse> {
                         override fun onResponse(call: Call<GetResponse>, response: Response<GetResponse>) {
-                            if(response.isSuccessful()) {
+                            if(response.isSuccessful) {
                                 Log.d("log", "get: $response")
                                 Log.d("log", "get: " + response.body().toString())
                             }
@@ -193,6 +202,7 @@ class MainActivity : AppCompatActivity() {
 
     //api 호출
     open inner class CallApiThread : Thread() {
+        @SuppressLint("NotifyDataSetChanged")
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
             val testDate = s_day
@@ -270,7 +280,7 @@ class MainActivity : AppCompatActivity() {
 
         @POST("64240d2c20a07443f9de31fc")
         fun postSchedule(
-            @Body jsonparams: PostModel,
+            @Body jsonParams: PostModel,
         ): Call<PostModel>
 
         @PUT("schedule?")
