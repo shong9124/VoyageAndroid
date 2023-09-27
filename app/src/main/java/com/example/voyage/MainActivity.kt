@@ -11,11 +11,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.CalendarView
-import android.widget.CalendarView.OnDateChangeListener
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -23,6 +20,7 @@ import com.google.gson.GsonBuilder
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
@@ -40,10 +38,9 @@ import retrofit2.http.Query
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.time.Duration.Companion.days
 
 var s_day : String = ""
 var scheduleList = ArrayList<AddSchedule>()
@@ -68,9 +65,6 @@ class MainActivity : AppCompatActivity() {
         val calendarView: MaterialCalendarView = findViewById(R.id.calendarView)
         val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
 
-        //날짜 형태
-        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
-
         //date 타입(오늘 날짜)
         calendarView.setSelectedDate(CalendarDay.today())
         s_day = calendarView.selectedDate?.date.toString()
@@ -81,6 +75,14 @@ class MainActivity : AppCompatActivity() {
         rv_schedule.layoutManager = LinearLayoutManager(
             this, LinearLayoutManager.VERTICAL, false)
 
+        //CalendarView 달 변환 이벤트
+        calendarView.setOnMonthChangedListener(object: OnMonthChangedListener {
+            override fun onMonthChanged(widget: MaterialCalendarView, date: CalendarDay) {
+                //CalendarView 일정이 있는 날 표시
+                calendarView.addDecorator(EventDecorator(Collections.singleton(date)))
+            }
+        })
+
         //CalendarView 날짜 변환 이벤트
         calendarView.setOnDateChangedListener(object: OnDateSelectedListener {
             override fun onDateSelected(widget: MaterialCalendarView, date: CalendarDay, selected: Boolean) {
@@ -90,19 +92,13 @@ class MainActivity : AppCompatActivity() {
                 val sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
                 s_day = sDate
 
-                //날짜 텍스트뷰에 담기
+                //날짜 textView 에 담기
                 dayText.text = s_day
                 //api 호출
                 CallApiThread().start()
                 Log.d("ASL", "$scheduleList")
             }
         })
-
-        //CalendarView 일정이 있는 날 표시
-        if (scheduleList.size > 0) {
-            val date = s_day as CalendarDay
-            calendarView.addDecorator(EventDecorator(Collections.singleton(date)))
-        }
 
         //화면 변환
         val add: Button = findViewById(R.id.btn_add)
@@ -134,6 +130,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //화면 전환할 때 데이터 받아 오는 함수..
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -230,7 +227,7 @@ class MainActivity : AppCompatActivity() {
             val jsonArray : JSONArray = root.optJSONArray("data")
             //api에서 data부분 내용을 가져옴
             var jsonObject : JSONObject
-            //일정의 id를 가져오는 함수
+            //일정의 id를 가져 오는 함수
             fun getId() {
                 if (jsonArray.length() != 0) {
                     val jso : JSONObject = jsonArray.getJSONObject(indexOfSchedule)
@@ -245,7 +242,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(Companion.TAG, "code: ${root.get("code")}")
             Log.d(Companion.TAG, "data: ${root.get("data")}")
 
-            //Ui 접근 가능하게 함 -> 메인스레드에서 동작(=CallApiThread)
+            //Ui 접근 가능 하게 함 -> MainThread 에서 동작(=CallApiThread)
             runOnUiThread {
                 //scheduleList 초기화
                 scheduleList.clear()
@@ -261,7 +258,6 @@ class MainActivity : AppCompatActivity() {
                     val apiEndTime = jsonObject.getString("endTime")
 
                     val group = AddSchedule(apiContent, apiColor, apiMemo, apiEndDate, apiEndTime)
-
                     //불러온 일정 scheduleList에 저장
                     scheduleList.add(group)
                 }
@@ -299,7 +295,7 @@ class MainActivity : AppCompatActivity() {
         companion object {
             fun create(): testInterface {
 
-                val gson: Gson = GsonBuilder().setLenient().create();
+                val gson: Gson = GsonBuilder().setLenient().create()
 
                 return Retrofit.Builder()
                     .baseUrl(API_SCHEDULE_URL)
