@@ -40,13 +40,13 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.time.Duration.Companion.days
 
 var s_day : String = ""
 var scheduleList = ArrayList<AddSchedule>()
 var rv_adapter = MainRvAdapter(scheduleList)
 var scheduleId : String = ""
 var indexOfSchedule : Int = 0
+var monthOfDay : Int = 0
 const val REQUEST_CODE = 200
 const val REQUEST_CODE_EDIT = 123
 
@@ -78,8 +78,14 @@ class MainActivity : AppCompatActivity() {
         //CalendarView 달 변환 이벤트
         calendarView.setOnMonthChangedListener(object: OnMonthChangedListener {
             override fun onMonthChanged(widget: MaterialCalendarView, date: CalendarDay) {
-                //CalendarView 일정이 있는 날 표시
-                calendarView.addDecorator(EventDecorator(Collections.singleton(date)))
+                getMonthOfDays(date.month)
+                for (i in 0 until monthOfDay) {
+                    val sYear : Int = date.date.year
+                    val sMonth : Int = date.month
+                    val sDay : Int = date.day + i
+                    val newDate : CalendarDay = CalendarDay.from(sYear, sMonth, sDay)
+//                    CallApiThread().dotSchedule()
+                }
             }
         })
 
@@ -197,6 +203,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun getMonthOfDays(month: Int) {
+        if (month == 1) monthOfDay = 31
+        if (month == 2) monthOfDay = 28
+        if (month == 3) monthOfDay = 31
+        if (month == 4) monthOfDay = 30
+        if (month == 5) monthOfDay = 31
+        if (month == 6) monthOfDay = 30
+        if (month == 7) monthOfDay = 31
+        if (month == 8) monthOfDay = 31
+        if (month == 9) monthOfDay= 30
+        if (month == 10) monthOfDay = 31
+        if (month == 11) monthOfDay = 30
+        if (month == 12) monthOfDay = 31
+    }
+
     //api 호출
     open inner class CallApiThread : Thread() {
         @SuppressLint("NotifyDataSetChanged")
@@ -235,6 +256,25 @@ class MainActivity : AppCompatActivity() {
                     val id : String = jso.getString("id")
                     scheduleId = id
                     indexOfSchedule = 0
+                }
+            }
+
+            fun dotSchedule(date: CalendarDay) {
+                val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
+                getMonthOfDays(date.month)
+                //CalendarView 일정이 있는 날 표시
+                for (i in 0 until monthOfDay) {
+                    val tmp = date.day + i
+                    val sYear : Int = date.date.year
+                    val sMonth : Int = date.month
+                    val sDate = "$sYear-%02d-%02d".format(sMonth, tmp)
+                    s_day = sDate
+                    val newDate : CalendarDay = CalendarDay.from(sYear, sMonth, tmp)
+                    Log.d("DAY", "$s_day")
+                    CallApiThread().start()
+                    if (jsonArray.length() != 0) {
+                        calendarView.addDecorator(EventDecorator(Collections.singleton(newDate)))
+                    }
                 }
             }
 
