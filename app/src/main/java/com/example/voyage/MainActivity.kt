@@ -78,14 +78,7 @@ class MainActivity : AppCompatActivity() {
         //CalendarView 달 변환 이벤트
         calendarView.setOnMonthChangedListener(object: OnMonthChangedListener {
             override fun onMonthChanged(widget: MaterialCalendarView, date: CalendarDay) {
-                getMonthOfDays(date.month)
-                for (i in 0 until monthOfDay) {
-                    val sYear : Int = date.date.year
-                    val sMonth : Int = date.month
-                    val sDay : Int = date.day + i
-                    val newDate : CalendarDay = CalendarDay.from(sYear, sMonth, sDay)
-//                    CallApiThread().dotSchedule()
-                }
+
             }
         })
 
@@ -189,7 +182,7 @@ class MainActivity : AppCompatActivity() {
                     api.editSchedule("64240d2c20a07443f9de31fc", scheduleId, data)
                         .enqueue(object : Callback<PostModel> {
                         override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
-                            Log.d("API_PUT", "put: " + response.toString())
+                            Log.d("API_PUT", "put: $response")
                             Log.d("API_PUT", "put: " + response.body().toString())
                             Log.d("API_PUT", "put: schedule edited successfully")
                             CallApiThread().start()
@@ -262,17 +255,12 @@ class MainActivity : AppCompatActivity() {
             fun dotSchedule(date: CalendarDay) {
                 val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
                 getMonthOfDays(date.month)
-                //CalendarView 일정이 있는 날 표시
                 for (i in 0 until monthOfDay) {
-                    val tmp = date.day + i
                     val sYear : Int = date.date.year
                     val sMonth : Int = date.month
-                    val sDate = "$sYear-%02d-%02d".format(sMonth, tmp)
-                    s_day = sDate
-                    val newDate : CalendarDay = CalendarDay.from(sYear, sMonth, tmp)
-                    Log.d("DAY", "$s_day")
-                    CallApiThread().start()
+                    val sDay : Int = date.day + i
                     if (jsonArray.length() != 0) {
+                        val newDate : CalendarDay = CalendarDay.from(sYear, sMonth, sDay)
                         calendarView.addDecorator(EventDecorator(Collections.singleton(newDate)))
                     }
                 }
@@ -287,6 +275,7 @@ class MainActivity : AppCompatActivity() {
                 //scheduleList 초기화
                 scheduleList.clear()
                 getId()
+                dotSchedule(CalendarDay.from(2023, 10, 1))
                 //api 일정 불러 오기
                 for (index in 0 until jsonArray.length()) {
                     jsonObject = jsonArray.getJSONObject(index)
