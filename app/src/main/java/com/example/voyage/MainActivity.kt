@@ -216,7 +216,7 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("NotifyDataSetChanged")
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
-            val testDate = s_day
+            var testDate = s_day
             val testUserId = "64240be120a07443f9de31f7"
 
             val url =
@@ -254,16 +254,22 @@ class MainActivity : AppCompatActivity() {
 
             fun dotSchedule(date: CalendarDay) {
                 val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
+                val newDateList = ArrayList<CalendarDay>()
                 getMonthOfDays(date.month)
                 for (i in 0 until monthOfDay) {
                     val sYear : Int = date.date.year
                     val sMonth : Int = date.month
                     val sDay : Int = date.day + i
+                    val sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
+                    testDate = sDate
+                    Log.d("URL", "$url")
                     if (jsonArray.length() != 0) {
                         val newDate : CalendarDay = CalendarDay.from(sYear, sMonth, sDay)
-                        calendarView.addDecorator(EventDecorator(Collections.singleton(newDate)))
+                        newDateList.add(newDate)
+//                        calendarView.addDecorator(EventDecorator(Collections.singleton(newDate)))
                     }
                 }
+//                Log.d("CHECK", "$newDateList")
             }
 
             Log.d(Companion.TAG, "root: $root")
@@ -275,7 +281,7 @@ class MainActivity : AppCompatActivity() {
                 //scheduleList 초기화
                 scheduleList.clear()
                 getId()
-                dotSchedule(CalendarDay.from(2023, 10, 1))
+//                dotSchedule(CalendarDay.from(2023, 10, 1))
                 //api 일정 불러 오기
                 for (index in 0 until jsonArray.length()) {
                     jsonObject = jsonArray.getJSONObject(index)
@@ -292,6 +298,38 @@ class MainActivity : AppCompatActivity() {
                 }
                 rv_adapter.notifyDataSetChanged()   //전체 새로고침
             }
+        }
+    }
+
+    inner class ApiThread : Thread() {
+        @SuppressLint("NotifyDataSetChanged")
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        override fun run() {
+            var testDate = s_day
+            val testUserId = "64240be120a07443f9de31f7"
+
+            val url =
+                URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
+
+            val conn = url.openConnection()
+            val input = conn.getInputStream()
+            val isr = InputStreamReader(input)
+            val br = BufferedReader(isr)
+
+            var str: String? = null
+            val buf = StringBuffer()
+
+            do {
+                str = br.readLine()
+                if (str != null) {
+                    buf.append(str)
+                }
+            } while (str != null)
+
+            val root = JSONObject(buf.toString())
+            val jsonArray: JSONArray = root.optJSONArray("data")
+            //api에서 data부분 내용을 가져옴
+            var jsonObject: JSONObject
         }
     }
 
