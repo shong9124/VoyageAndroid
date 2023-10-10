@@ -42,7 +42,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 var s_day : String = ""
+var sDate : String = ""
 var scheduleList = ArrayList<AddSchedule>()
+var newDateList = ArrayList<CalendarDay>()
 var rv_adapter = MainRvAdapter(scheduleList)
 var scheduleId : String = ""
 var indexOfSchedule : Int = 0
@@ -168,7 +170,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     })
                 }
-                //put으로 main화면에 돌아왔을 때
+                //put으로 main화면에 돌아 왔을 때
                 REQUEST_CODE_EDIT -> {
                     val getContent = data?.getStringExtra("content")
                     val getColor = data?.getStringExtra("color")
@@ -205,10 +207,25 @@ class MainActivity : AppCompatActivity() {
         if (month == 6) monthOfDay = 30
         if (month == 7) monthOfDay = 31
         if (month == 8) monthOfDay = 31
-        if (month == 9) monthOfDay= 30
+        if (month == 9) monthOfDay = 30
         if (month == 10) monthOfDay = 31
         if (month == 11) monthOfDay = 30
         if (month == 12) monthOfDay = 31
+    }
+
+    fun newDate(year: Int, month: Int, day: Int): CalendarDay {
+        return CalendarDay.from(year, month, day)
+    }
+
+    fun stringToInt(str: String): CalendarDay {
+        val stringYear = str.substring(0, 4)
+        val intYear = stringYear.toInt()
+        val stringMonth = str.substring(5, 7)
+        val intMonth = stringMonth.toInt()
+        val stringDay = str.substring(8, 10)
+        val intDay = stringDay.toInt()
+
+        return CalendarDay.from(intYear, intMonth, intDay)
     }
 
     //api 호출
@@ -216,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("NotifyDataSetChanged")
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
-            var testDate = s_day
+            val testDate = s_day
             val testUserId = "64240be120a07443f9de31f7"
 
             val url =
@@ -251,26 +268,24 @@ class MainActivity : AppCompatActivity() {
                     indexOfSchedule = 0
                 }
             }
-
             fun dotSchedule(date: CalendarDay) {
                 val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
-                val newDateList = ArrayList<CalendarDay>()
                 getMonthOfDays(date.month)
                 for (i in 0 until monthOfDay) {
                     val sYear : Int = date.date.year
                     val sMonth : Int = date.month
                     val sDay : Int = date.day + i
-                    val sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
-                    testDate = sDate
-                    Log.d("URL", "$url")
-                    if (jsonArray.length() != 0) {
-                        val newDate : CalendarDay = CalendarDay.from(sYear, sMonth, sDay)
-                        newDateList.add(newDate)
+                    sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
+                    ApiThread().start()
+//                    Log.d("URL", "$url")
+//                    if (jsonArray.length() != 0) {
+//                        newDateList.add(newDate(sYear, sMonth, sDay))
 //                        calendarView.addDecorator(EventDecorator(Collections.singleton(newDate)))
-                    }
+//                    }
                 }
-//                Log.d("CHECK", "$newDateList")
+                Log.d("CHECK", "$newDateList")
             }
+            dotSchedule(CalendarDay.from(2023, 10, 1))
 
             Log.d(Companion.TAG, "root: $root")
             Log.d(Companion.TAG, "code: ${root.get("code")}")
@@ -281,6 +296,7 @@ class MainActivity : AppCompatActivity() {
                 //scheduleList 초기화
                 scheduleList.clear()
                 getId()
+                ApiThread().start()
 //                dotSchedule(CalendarDay.from(2023, 10, 1))
                 //api 일정 불러 오기
                 for (index in 0 until jsonArray.length()) {
@@ -305,7 +321,7 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("NotifyDataSetChanged")
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
-            var testDate = s_day
+            val testDate = sDate
             val testUserId = "64240be120a07443f9de31f7"
 
             val url =
@@ -328,8 +344,11 @@ class MainActivity : AppCompatActivity() {
 
             val root = JSONObject(buf.toString())
             val jsonArray: JSONArray = root.optJSONArray("data")
-            //api에서 data부분 내용을 가져옴
-            var jsonObject: JSONObject
+
+            if (jsonArray.length() != 0) {
+                newDateList.add(stringToInt(sDate))
+                Log.d("CHECK", "$newDateList")
+            }
         }
     }
 
