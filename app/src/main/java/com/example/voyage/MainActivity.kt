@@ -8,6 +8,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -54,7 +56,7 @@ const val REQUEST_CODE_EDIT = 123
 
 class MainActivity : AppCompatActivity() {
 
-    val api = testInterface.create()
+    val api = TestInterface.create()
 
     @SuppressLint("MissingInflatedId", "UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,10 +158,10 @@ class MainActivity : AppCompatActivity() {
                         }
                     })
                     //post
-                    val data = PostModel(getContent.toString(), getColor.toString(),
+                    val scheduleData = PostModel(getContent.toString(), getColor.toString(),
                             getMemo.toString(), s_day, getEndTime.toString())
 
-                    api.postSchedule(data).enqueue(object : Callback<PostModel> {
+                    api.postSchedule(scheduleData).enqueue(object : Callback<PostModel> {
                         override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
                             Log.d("log", "post: $response")
                             Log.d("log", "post: " + response.body().toString())
@@ -177,11 +179,11 @@ class MainActivity : AppCompatActivity() {
                     val getMemo = data?.getStringExtra("memo")
                     val getEndTime = data?.getStringExtra("endTime")
 
-                    val data = PostModel(getContent.toString(), getColor.toString(),
+                    val scheduleData = PostModel(getContent.toString(), getColor.toString(),
                         getMemo.toString(), s_day, getEndTime.toString())
 
                     //put
-                    api.editSchedule("64240d2c20a07443f9de31fc", scheduleId, data)
+                    api.editSchedule("64240d2c20a07443f9de31fc", scheduleId, scheduleData)
                         .enqueue(object : Callback<PostModel> {
                         override fun onResponse(call: Call<PostModel>, response: Response<PostModel>) {
                             Log.d("API_PUT", "put: $response")
@@ -211,10 +213,6 @@ class MainActivity : AppCompatActivity() {
         if (month == 10) monthOfDay = 31
         if (month == 11) monthOfDay = 30
         if (month == 12) monthOfDay = 31
-    }
-
-    fun newDate(year: Int, month: Int, day: Int): CalendarDay {
-        return CalendarDay.from(year, month, day)
     }
 
     fun stringToInt(str: String): CalendarDay {
@@ -269,21 +267,23 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             fun dotSchedule(date: CalendarDay) {
-                val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
                 getMonthOfDays(date.month)
-                for (i in 0 until monthOfDay) {
-                    val sYear : Int = date.date.year
-                    val sMonth : Int = date.month
-                    val sDay : Int = date.day + i
-                    sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
-                    ApiThread().start()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    for (i in 0 until monthOfDay) {
+                        val sYear : Int = date.date.year
+                        val sMonth : Int = date.month
+                        val sDay : Int = date.day + i
+                        sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
+//                        Log.d("CHECK", sDate)
+                        ApiThread().start()
 //                    Log.d("URL", "$url")
 //                    if (jsonArray.length() != 0) {
 //                        newDateList.add(newDate(sYear, sMonth, sDay))
 //                        calendarView.addDecorator(EventDecorator(Collections.singleton(newDate)))
 //                    }
-                }
-                Log.d("CHECK", "$newDateList")
+                    }
+                }, 10)
+//                Log.d("CHECK", "$newDateList")
             }
             dotSchedule(CalendarDay.from(2023, 10, 1))
 
@@ -296,9 +296,8 @@ class MainActivity : AppCompatActivity() {
                 //scheduleList 초기화
                 scheduleList.clear()
                 getId()
-                ApiThread().start()
 //                dotSchedule(CalendarDay.from(2023, 10, 1))
-                //api 일정 불러 오기
+                //api 추가한 일정 불러 오기
                 for (index in 0 until jsonArray.length()) {
                     jsonObject = jsonArray.getJSONObject(index)
 
@@ -312,7 +311,7 @@ class MainActivity : AppCompatActivity() {
                     //불러온 일정 scheduleList에 저장
                     scheduleList.add(group)
                 }
-                rv_adapter.notifyDataSetChanged()   //전체 새로고침
+                rv_adapter.notifyDataSetChanged()   //전체 새로 고침
             }
         }
     }
@@ -323,6 +322,7 @@ class MainActivity : AppCompatActivity() {
         override fun run() {
             val testDate = sDate
             val testUserId = "64240be120a07443f9de31f7"
+            Log.d("CHECK2", sDate)
 
             val url =
                 URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
@@ -345,18 +345,22 @@ class MainActivity : AppCompatActivity() {
             val root = JSONObject(buf.toString())
             val jsonArray: JSONArray = root.optJSONArray("data")
 
-            if (jsonArray.length() != 0) {
-                newDateList.add(stringToInt(sDate))
-                Log.d("CHECK", "$newDateList")
+            runOnUiThread {
+                if (jsonArray.length() != 0) {
+                    val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
+//                newDateList.add(stringToInt(sDate))
+//                Log.d("CHECK", "$newDateList")
+                    calendarView.addDecorator(EventDecorator(Collections.singleton(stringToInt(sDate))))
+                }
             }
         }
     }
 
-    // 인터페이스
-    interface testInterface {
+    // interface
+    interface TestInterface {
         @GET("schedule/endAt?ownerId=64240be120a07443f9de31f7")
         fun getSchedule(
-            //Query: url부분에 추가되는 부분
+            //Query: url 부분에 추가 되는 부분
             @Query("date") date: String
         ): Call<GetResponse>
 
@@ -379,7 +383,7 @@ class MainActivity : AppCompatActivity() {
         ): Call<Void>
 
         companion object {
-            fun create(): testInterface {
+            fun create(): TestInterface {
 
                 val gson: Gson = GsonBuilder().setLenient().create()
 
@@ -387,7 +391,7 @@ class MainActivity : AppCompatActivity() {
                     .baseUrl(API_SCHEDULE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build()
-                    .create(testInterface::class.java)
+                    .create(TestInterface::class.java)
             }
         }
     }

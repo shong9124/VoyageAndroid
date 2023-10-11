@@ -1,9 +1,5 @@
 package com.example.voyage
 
-import android.widget.EditText
-import android.widget.TimePicker
-import com.google.gson.annotations.SerializedName
-
 data class GetResponse(
     var code: String? = null,
     var codeMsg: String? = null,
