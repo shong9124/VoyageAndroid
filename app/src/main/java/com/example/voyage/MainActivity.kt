@@ -171,6 +171,9 @@ class MainActivity : AppCompatActivity() {
                             Log.d("log", "post: fail to save data")
                         }
                     })
+
+                    //SharedPreferences
+                    App.prefs.setString("Date", s_day)
                 }
                 //put으로 main화면에 돌아 왔을 때
                 REQUEST_CODE_EDIT -> {
@@ -268,21 +271,21 @@ class MainActivity : AppCompatActivity() {
             }
             fun dotSchedule(date: CalendarDay) {
                 getMonthOfDays(date.month)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    for (i in 0 until monthOfDay) {
-                        val sYear : Int = date.date.year
-                        val sMonth : Int = date.month
-                        val sDay : Int = date.day + i
+                for (i in 0 until monthOfDay) {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        val sYear: Int = date.date.year
+                        val sMonth: Int = date.month
+                        val sDay: Int = date.day + i
                         sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
 //                        Log.d("CHECK", sDate)
                         ApiThread().start()
+                    }, 20)
 //                    Log.d("URL", "$url")
 //                    if (jsonArray.length() != 0) {
 //                        newDateList.add(newDate(sYear, sMonth, sDay))
 //                        calendarView.addDecorator(EventDecorator(Collections.singleton(newDate)))
 //                    }
-                    }
-                }, 10)
+                }
 //                Log.d("CHECK", "$newDateList")
             }
             dotSchedule(CalendarDay.from(2023, 10, 1))
@@ -326,6 +329,7 @@ class MainActivity : AppCompatActivity() {
 
             val url =
                 URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
+            Log.d("URL", "$url")
 
             val conn = url.openConnection()
             val input = conn.getInputStream()
@@ -346,10 +350,8 @@ class MainActivity : AppCompatActivity() {
             val jsonArray: JSONArray = root.optJSONArray("data")
 
             runOnUiThread {
-                if (jsonArray.length() != 0) {
+                if (jsonArray.length() > 0) {
                     val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
-//                newDateList.add(stringToInt(sDate))
-//                Log.d("CHECK", "$newDateList")
                     calendarView.addDecorator(EventDecorator(Collections.singleton(stringToInt(sDate))))
                 }
             }
