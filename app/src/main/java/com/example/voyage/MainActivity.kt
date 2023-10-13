@@ -79,10 +79,14 @@ class MainActivity : AppCompatActivity() {
         rv_schedule.layoutManager = LinearLayoutManager(
             this, LinearLayoutManager.VERTICAL, false)
 
+        //schedule 존재 유무에 따라 점찍기
+        getSchedule(stringToInt(s_day))
+
         //CalendarView 달 변환 이벤트
         calendarView.setOnMonthChangedListener(object: OnMonthChangedListener {
             override fun onMonthChanged(widget: MaterialCalendarView, date: CalendarDay) {
-
+                //일정 있으면 점찍기
+                getSchedule(date)
             }
         })
 
@@ -118,6 +122,29 @@ class MainActivity : AppCompatActivity() {
                 goToEditScheduleScreen()
             }
         })
+    }
+
+    //일정 존재 유무 확인하고 점찍기
+    fun getSchedule(date: CalendarDay) {
+        getMonthOfDays(date.month)
+        for (i in 0 until monthOfDay) {
+            val sYear: Int = date.date.year
+            val sMonth: Int = date.month
+            val sDay: Int = date.day + i
+            sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
+            Log.d("sDate", sDate)
+            Log.d("PREFS", App.prefs.getString(sDate, ""))
+
+            if (App.prefs.getString(sDate, "") != "") {
+                dotSchedule(sDate)
+            }
+        }
+    }
+
+    //변수로 받는 날짜에 점 찍어주는 함수
+    fun dotSchedule(day: String) {
+        val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
+        calendarView.addDecorator(EventDecorator(Collections.singleton(stringToInt(day))))
     }
 
     // onCreate() 이후에 작동
@@ -166,14 +193,16 @@ class MainActivity : AppCompatActivity() {
                             Log.d("log", "post: $response")
                             Log.d("log", "post: " + response.body().toString())
                             CallApiThread().start()
+                            if (response.code() == 200) {
+                                //SharedPreferences
+                                App.prefs.setString(s_day, s_day)
+                                dotSchedule(s_day)
+                            }
                         }
                         override fun onFailure(call: Call<PostModel>, t: Throwable) {
                             Log.d("log", "post: fail to save data")
                         }
                     })
-
-                    //SharedPreferences
-                    App.prefs.setString("Date", s_day)
                 }
                 //put으로 main화면에 돌아 왔을 때
                 REQUEST_CODE_EDIT -> {
@@ -269,26 +298,6 @@ class MainActivity : AppCompatActivity() {
                     indexOfSchedule = 0
                 }
             }
-            fun dotSchedule(date: CalendarDay) {
-                getMonthOfDays(date.month)
-                for (i in 0 until monthOfDay) {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        val sYear: Int = date.date.year
-                        val sMonth: Int = date.month
-                        val sDay: Int = date.day + i
-                        sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
-//                        Log.d("CHECK", sDate)
-                        ApiThread().start()
-                    }, 20)
-//                    Log.d("URL", "$url")
-//                    if (jsonArray.length() != 0) {
-//                        newDateList.add(newDate(sYear, sMonth, sDay))
-//                        calendarView.addDecorator(EventDecorator(Collections.singleton(newDate)))
-//                    }
-                }
-//                Log.d("CHECK", "$newDateList")
-            }
-            dotSchedule(CalendarDay.from(2023, 10, 1))
 
             Log.d(Companion.TAG, "root: $root")
             Log.d(Companion.TAG, "code: ${root.get("code")}")
@@ -315,45 +324,6 @@ class MainActivity : AppCompatActivity() {
                     scheduleList.add(group)
                 }
                 rv_adapter.notifyDataSetChanged()   //전체 새로 고침
-            }
-        }
-    }
-
-    inner class ApiThread : Thread() {
-        @SuppressLint("NotifyDataSetChanged")
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-        override fun run() {
-            val testDate = sDate
-            val testUserId = "64240be120a07443f9de31f7"
-            Log.d("CHECK2", sDate)
-
-            val url =
-                URL(Companion.API_PERSONAL_SCHEDULE_BASE_URL + "/endAt?ownerId=$testUserId&date=$testDate")
-            Log.d("URL", "$url")
-
-            val conn = url.openConnection()
-            val input = conn.getInputStream()
-            val isr = InputStreamReader(input)
-            val br = BufferedReader(isr)
-
-            var str: String? = null
-            val buf = StringBuffer()
-
-            do {
-                str = br.readLine()
-                if (str != null) {
-                    buf.append(str)
-                }
-            } while (str != null)
-
-            val root = JSONObject(buf.toString())
-            val jsonArray: JSONArray = root.optJSONArray("data")
-
-            runOnUiThread {
-                if (jsonArray.length() > 0) {
-                    val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
-                    calendarView.addDecorator(EventDecorator(Collections.singleton(stringToInt(sDate))))
-                }
             }
         }
     }
