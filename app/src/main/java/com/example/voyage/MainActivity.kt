@@ -46,7 +46,6 @@ import kotlin.collections.ArrayList
 var s_day : String = ""
 var sDate : String = ""
 var scheduleList = ArrayList<AddSchedule>()
-var newDateList = ArrayList<CalendarDay>()
 var rv_adapter = MainRvAdapter(scheduleList)
 var scheduleId : String = ""
 var indexOfSchedule : Int = 0
@@ -141,16 +140,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //변수로 받는 날짜에 점 찍어주는 함수
+    //변수로 받는 날짜에 점 찍어 주는 함수
     fun dotSchedule(day: String) {
         val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
         calendarView.addDecorator(EventDecorator(Collections.singleton(stringToInt(day))))
+    }
+
+    fun deleteDot(day: String) {
+        App.prefs.delete(day)
+        //NullPointerException
+//        val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
+//        calendarView.removeDecorator(EventDecorator(Collections.singleton(stringToInt(day))))
+        Log.d("dotDelete", "dot deleted")
     }
 
     // onCreate() 이후에 작동
     override fun onStart() {
         super.onStart()
         CallApiThread().start()
+        getSchedule(stringToInt(s_day))
         Log.d("onLaunch", "onStart success")
     }
 
@@ -324,6 +332,9 @@ class MainActivity : AppCompatActivity() {
                     scheduleList.add(group)
                 }
                 rv_adapter.notifyDataSetChanged()   //전체 새로 고침
+                if (scheduleList.size == 0) {
+                    deleteDot(s_day)
+                }
             }
         }
     }
