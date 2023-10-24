@@ -8,8 +8,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -39,6 +37,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.lang.NullPointerException
 import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
@@ -132,9 +131,9 @@ class MainActivity : AppCompatActivity() {
             val sDay: Int = date.day + i
             sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
             Log.d("sDate", sDate)
-            Log.d("PREFS", App.prefs.getString(sDate, ""))
+            Log.d("PREFS", App.prefs.getString(changeString(sDate), ""))
 
-            if (App.prefs.getString(sDate, "") != "") {
+            if (App.prefs.getString(changeString(sDate), "") != "") {
                 dotSchedule(sDate)
             }
         }
@@ -142,16 +141,23 @@ class MainActivity : AppCompatActivity() {
 
     //변수로 받는 날짜에 점 찍어 주는 함수
     fun dotSchedule(day: String) {
-        val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
-        calendarView.addDecorator(EventDecorator(Collections.singleton(stringToInt(day))))
+        //점 삭제
+        try {
+            val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
+            calendarView.addDecorator(EventDecorator(Collections.singleton(stringToInt(day))))
+            if (scheduleList.size == 0) {
+                Log.d("dotDelete", "dot deleted")
+                calendarView.removeDecorator(EventDecorator(Collections.singleton((stringToInt(day)))))
+                calendarView.invalidateDecorators()
+            }
+        }
+        catch (e: NullPointerException) {
+            return
+        }
     }
 
-    fun deleteDot(day: String) {
+    fun deletePref(day: String) {
         App.prefs.delete(day)
-        //NullPointerException
-//        val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
-//        calendarView.removeDecorator(EventDecorator(Collections.singleton(stringToInt(day))))
-        Log.d("dotDelete", "dot deleted")
     }
 
     // onCreate() 이후에 작동
@@ -203,7 +209,7 @@ class MainActivity : AppCompatActivity() {
                             CallApiThread().start()
                             if (response.code() == 200) {
                                 //SharedPreferences
-                                App.prefs.setString(s_day, s_day)
+                                App.prefs.setString(changeString(s_day), changeString(s_day))
                                 dotSchedule(s_day)
                             }
                         }
@@ -264,6 +270,15 @@ class MainActivity : AppCompatActivity() {
         val intDay = stringDay.toInt()
 
         return CalendarDay.from(intYear, intMonth, intDay)
+    }
+
+    fun changeString(str: String): String {
+        val year = str.substring(0, 4)
+        val month = str.substring(5, 7)
+        val day = str.substring(8, 10)
+        val changedDay = "$year$month$day"
+
+        return changedDay
     }
 
     //api 호출
@@ -333,7 +348,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 rv_adapter.notifyDataSetChanged()   //전체 새로 고침
                 if (scheduleList.size == 0) {
-                    deleteDot(s_day)
+                    deletePref(s_day)
                 }
             }
         }

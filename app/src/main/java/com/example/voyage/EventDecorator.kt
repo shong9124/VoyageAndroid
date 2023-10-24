@@ -12,7 +12,6 @@ class EventDecorator(dates: Collection<CalendarDay>) : DayViewDecorator {
     override fun shouldDecorate(day: CalendarDay?): Boolean {
         return dates.contains(day)
     }
-
     override fun decorate(view: DayViewFacade?) {
         view?.addSpan(DotSpan(7F, Color.parseColor("#303f9f")))
 //        if (scheduleList[0].color == "RED")
