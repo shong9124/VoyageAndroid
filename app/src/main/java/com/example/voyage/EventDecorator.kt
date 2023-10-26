@@ -1,6 +1,7 @@
 package com.example.voyage
 
 import android.graphics.Color
+import android.util.Log
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade

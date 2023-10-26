@@ -77,13 +77,15 @@ class MainActivity : AppCompatActivity() {
         rv_schedule.layoutManager = LinearLayoutManager(
             this, LinearLayoutManager.VERTICAL, false)
 
-        //schedule 존재 유무에 따라 점찍기
+        //점 초기화
         getSchedule(stringToInt(s_day))
 
         //CalendarView 달 변환 이벤트
         calendarView.setOnMonthChangedListener(object: OnMonthChangedListener {
             override fun onMonthChanged(widget: MaterialCalendarView, date: CalendarDay) {
                 //일정 있으면 점찍기
+                calendarView.removeDecorators()
+                calendarView.invalidateDecorators()
                 getSchedule(date)
             }
         })
@@ -141,15 +143,9 @@ class MainActivity : AppCompatActivity() {
 
     //변수로 받는 날짜에 점 찍어 주는 함수
     fun dotSchedule(day: String) {
-        //점 삭제
         try {
             val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
             calendarView.addDecorator(EventDecorator(Collections.singleton(stringToInt(day))))
-            if (scheduleList.size == 0) {
-                Log.d("dotDelete", "dot deleted")
-                calendarView.removeDecorator(EventDecorator(Collections.singleton((stringToInt(day)))))
-                calendarView.invalidateDecorators()
-            }
         }
         catch (e: NullPointerException) {
             return
@@ -157,7 +153,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun deletePref(day: String) {
-        App.prefs.delete(day)
+        App.prefs.delete(changeString(day))
     }
 
     // onCreate() 이후에 작동
@@ -331,7 +327,6 @@ class MainActivity : AppCompatActivity() {
                 //scheduleList 초기화
                 scheduleList.clear()
                 getId()
-//                dotSchedule(CalendarDay.from(2023, 10, 1))
                 //api 추가한 일정 불러 오기
                 for (index in 0 until jsonArray.length()) {
                     jsonObject = jsonArray.getJSONObject(index)
@@ -347,8 +342,12 @@ class MainActivity : AppCompatActivity() {
                     scheduleList.add(group)
                 }
                 rv_adapter.notifyDataSetChanged()   //전체 새로 고침
-                if (scheduleList.size == 0) {
+                //점 삭제
+                if (jsonArray.length() == 0) {
                     deletePref(s_day)
+                    if (App.prefs.getString(changeString(s_day), "") == "") {
+                        getSchedule(stringToInt(s_day))
+                    }
                 }
             }
         }

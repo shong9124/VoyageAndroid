@@ -12,6 +12,7 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -75,8 +76,6 @@ class EditScheduleScreen : AppCompatActivity(), CallBack {
                         Toast.makeText(this@EditScheduleScreen,
                             "schedule deleted", Toast.LENGTH_SHORT).show()
                         MainActivity().CallApiThread().start()
-                        MainActivity().dotSchedule(s_day)
-                        MainActivity().deletePref(MainActivity().changeString(s_day))
                     }
                     override fun onFailure(call: Call<Void>, t: Throwable) {
                         Log.d("DELETE", "delete: fail to delete")
