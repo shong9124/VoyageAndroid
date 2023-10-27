@@ -30,6 +30,8 @@ class EditScheduleScreen : AppCompatActivity(), CallBack {
         val colorBtn: Button = findViewById(R.id.btn_palette2)
         val memo: EditText? = findViewById(R.id.memo_edt2)
 
+        //EditText 기본 설정
+
         //timePicker 관련 객체
         val endAt: TimePicker = findViewById(R.id.tp_endAt2)
         var endTime: String = ""

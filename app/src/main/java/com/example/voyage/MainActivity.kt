@@ -12,9 +12,11 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.shape.MarkerEdgeTreatment
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -130,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until monthOfDay) {
             val sYear: Int = date.date.year
             val sMonth: Int = date.month
-            val sDay: Int = date.day + i
+            val sDay: Int = 1 + i
             sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
             Log.d("sDate", sDate)
             Log.d("PREFS", App.prefs.getString(changeString(sDate), ""))
@@ -346,6 +348,14 @@ class MainActivity : AppCompatActivity() {
                 if (jsonArray.length() == 0) {
                     deletePref(s_day)
                     if (App.prefs.getString(changeString(s_day), "") == "") {
+                        try {
+                            val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
+                            calendarView.removeDecorators()
+                            calendarView.invalidateDecorators()
+                        }
+                        catch (e: NullPointerException) {
+                            Log.d("ERROR", "NullPointerException")
+                        }
                         getSchedule(stringToInt(s_day))
                     }
                 }
