@@ -12,11 +12,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.shape.MarkerEdgeTreatment
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -67,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         //날짜 관련 객체 생성
         val dayText: TextView = findViewById(R.id.day_text)
         val calendarView: MaterialCalendarView = findViewById(R.id.calendarView)
-        val rv_schedule: RecyclerView = findViewById(R.id.rv_schedule)
+        val rvSchedule: RecyclerView = findViewById(R.id.rv_schedule)
 
         //date 타입(오늘 날짜)
         calendarView.setSelectedDate(CalendarDay.today())
@@ -75,8 +73,8 @@ class MainActivity : AppCompatActivity() {
         //날짜 textView 에 담기
         dayText.text = s_day
         //recyclerView adapter 연결
-        rv_schedule.adapter = rv_adapter
-        rv_schedule.layoutManager = LinearLayoutManager(
+        rvSchedule.adapter = rv_adapter
+        rvSchedule.layoutManager = LinearLayoutManager(
             this, LinearLayoutManager.VERTICAL, false)
 
         //점 초기화
@@ -274,9 +272,8 @@ class MainActivity : AppCompatActivity() {
         val year = str.substring(0, 4)
         val month = str.substring(5, 7)
         val day = str.substring(8, 10)
-        val changedDay = "$year$month$day"
 
-        return changedDay
+        return "$year$month$day"
     }
 
     //api 호출
@@ -338,6 +335,11 @@ class MainActivity : AppCompatActivity() {
                     val apiMemo = jsonObject.getString("memo")
                     val apiEndDate = jsonObject.getString("endDate")
                     val apiEndTime = jsonObject.getString("endTime")
+
+                    //sharedPrefs
+                    App.prefs.setString("content", apiContent)
+                    App.prefs.setString("color", apiColor)
+                    App.prefs.setString("memo", apiMemo)
 
                     val group = AddSchedule(apiContent, apiColor, apiMemo, apiEndDate, apiEndTime)
                     //불러온 일정 scheduleList에 저장

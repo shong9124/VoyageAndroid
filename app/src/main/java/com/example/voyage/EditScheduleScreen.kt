@@ -12,7 +12,6 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +30,10 @@ class EditScheduleScreen : AppCompatActivity(), CallBack {
         val memo: EditText? = findViewById(R.id.memo_edt2)
 
         //EditText 기본 설정
+        content?.setText(App.prefs.getString("content", ""))
+        memo?.setText(App.prefs.getString("memo", ""))
+        //ColorBtn 기본 설정
+        callBackExample(App.prefs.getString("color", ""))
 
         //timePicker 관련 객체
         val endAt: TimePicker = findViewById(R.id.tp_endAt2)
