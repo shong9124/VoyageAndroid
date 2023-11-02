@@ -14,24 +14,51 @@ class EventDecorator(dates: Collection<CalendarDay>) : DayViewDecorator {
         return dates.contains(day)
     }
     override fun decorate(view: DayViewFacade?) {
+//        view?.addSpan(DotSpan(7F, Color.parseColor("#303f9f")))
+        if (App.prefs.getString("color", "") == "RED")
+            redDecorate(view)
+        if (App.prefs.getString("color", "") == "ORANGE")
+            orangeDecorate(view)
+        if (App.prefs.getString("color", "") == "YELLOW")
+            yellowDecorate(view)
+        if (App.prefs.getString("color", "") == "GREEN")
+            greenDecorate(view)
+        if (App.prefs.getString("color", "") == "DEEP GREEN")
+            deepGreenDecorate(view)
+        if (App.prefs.getString("color", "") == "BLUE")
+            blueDecorate(view)
+        if (App.prefs.getString("color", "") == "DEEP BLUE")
+            deepBlueDecorate(view)
+        if (App.prefs.getString("color", "") == "BROWN")
+            brownDecorate(view)
+        if (App.prefs.getString("color", "") == "GRAY")
+            grayDecorate(view)
+    }
+    private fun redDecorate(view: DayViewFacade?) {
+        view?.addSpan(DotSpan(7F, Color.parseColor("#d32f2f")))
+    }
+    private fun orangeDecorate(view: DayViewFacade?) {
+        view?.addSpan(DotSpan(7F, Color.parseColor("#f57c00")))
+    }
+    private fun yellowDecorate(view: DayViewFacade?) {
+        view?.addSpan(DotSpan(7F, Color.parseColor("#dfbc02")))
+    }
+    private fun greenDecorate(view: DayViewFacade?) {
+        view?.addSpan(DotSpan(7F, Color.parseColor("#689f38")))
+    }
+    private fun deepGreenDecorate(view: DayViewFacade?) {
+        view?.addSpan(DotSpan(7F, Color.parseColor("#00796b")))
+    }
+    private fun blueDecorate(view: DayViewFacade?) {
+        view?.addSpan(DotSpan(7F, Color.parseColor("#0288d1")))
+    }
+    private fun deepBlueDecorate(view: DayViewFacade?) {
         view?.addSpan(DotSpan(7F, Color.parseColor("#303f9f")))
-//        if (scheduleList[0].color == "RED")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#d32f2f")))
-//        if (scheduleList[0].color == "ORANGE")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#f57c00")))
-//        if (scheduleList[0].color == "YELLOW")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#dfbc02")))
-//        if (scheduleList[0].color == "GREEN")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#689f38")))
-//        if (scheduleList[0].color == "DEEP GREEN")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#00796b")))
-//        if (scheduleList[0].color == "BLUE")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#0288d1")))
-//        if (scheduleList[0].color == "DEEP BLUE")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#303f9f")))
-//        if (scheduleList[0].color == "BROWN")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#5d4037")))
-//        if (scheduleList[0].color == "GRAY")
-//            view?.addSpan(DotSpan(5F, Color.parseColor("#455a64")))
+    }
+    private fun brownDecorate(view: DayViewFacade?) {
+        view?.addSpan(DotSpan(7F, Color.parseColor("#5d4037")))
+    }
+    private fun grayDecorate(view: DayViewFacade?) {
+        view?.addSpan(DotSpan(7F, Color.parseColor("#455a64")))
     }
 }
