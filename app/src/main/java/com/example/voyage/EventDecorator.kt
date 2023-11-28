@@ -21,15 +21,17 @@ class EventDecorator(dates: Collection<CalendarDay>) : DayViewDecorator {
     }
 
     override fun decorate(view: DayViewFacade?) {
-        colorList.add(R.color.red)
-        colorList.add(R.color.orange)
-        colorList.add(R.color.yellow_300)
-        colorList.add(R.color.green_200)
-        colorList.add(R.color.green_700)
-        colorList.add(R.color.blue_200)
-        colorList.add(R.color.blue_700)
-        colorList.add(R.color.brown)
-        colorList.add(R.color.gray)
+        if (App.prefs.getString(MainActivity().changeString(s_day), "") != "") {
+            colorList.add(Color.parseColor("#d32f2f"))
+        }
+//        colorList.add(R.color.orange)
+//        colorList.add(R.color.yellow_300)
+//        colorList.add(R.color.green_200)
+//        colorList.add(R.color.green_700)
+//        colorList.add(R.color.blue_200)
+//        colorList.add(R.color.blue_700)
+//        colorList.add(R.color.brown)
+//        colorList.add(R.color.gray)
         colors = IntArray(colorList.size)
 
         for (i in colorList.indices) {
@@ -72,7 +74,7 @@ class CustomMultipleDotSpan : LineBackgroundSpan {
             val oldColor = paint.color
             canvas.drawCircle(((left + right) / 2 - leftMost).toFloat(), bottom + radius, radius, paint)
             paint.color = oldColor
-            leftMost += 24
+            leftMost += 24      //점과 점 사이 공간
         }
     }
 }
