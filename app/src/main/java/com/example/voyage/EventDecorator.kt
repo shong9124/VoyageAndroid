@@ -21,9 +21,7 @@ class EventDecorator(dates: Collection<CalendarDay>) : DayViewDecorator {
     }
 
     override fun decorate(view: DayViewFacade?) {
-        if (App.prefs.getString(MainActivity().changeString(s_day), "") != "") {
-            colorList.add(Color.parseColor("#d32f2f"))
-        }
+        colorList.add(Color.parseColor("#d32f2f"))
 //        colorList.add(R.color.orange)
 //        colorList.add(R.color.yellow_300)
 //        colorList.add(R.color.green_200)
