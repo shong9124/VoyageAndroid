@@ -1,42 +1,37 @@
 package com.example.voyage
 
+import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.style.LineBackgroundSpan
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import com.prolificinteractive.materialcalendarview.spans.DotSpan
 import com.prolificinteractive.materialcalendarview.spans.DotSpan.DEFAULT_RADIUS
 
 class EventDecorator(dates: Collection<CalendarDay>) : DayViewDecorator {
     var dates: HashSet<CalendarDay> = HashSet(dates)
     private lateinit var colors : IntArray
-    private var colorList = ArrayList<Int>()
+    var colorList
+    = arrayListOf<Int>(R.color.red, R.color.orange, R.color.yellow_300, R.color.green_200,
+        R.color.green_700, R.color.blue_200, R.color.blue_700, R.color.brown, R.color.gray)
 
     override fun shouldDecorate(day: CalendarDay?): Boolean {
         return dates.contains(day)
     }
 
     override fun decorate(view: DayViewFacade?) {
-        colorList.add(Color.parseColor("#d32f2f"))
-//        colorList.add(R.color.orange)
-//        colorList.add(R.color.yellow_300)
-//        colorList.add(R.color.green_200)
-//        colorList.add(R.color.green_700)
-//        colorList.add(R.color.blue_200)
-//        colorList.add(R.color.blue_700)
-//        colorList.add(R.color.brown)
-//        colorList.add(R.color.gray)
         colors = IntArray(colorList.size)
 
         for (i in colorList.indices) {
             colors[i] = colorList[i]
+            Log.d("colors", "${colors[i]}")
         }
         view?.addSpan(CustomMultipleDotSpan(7f, colors))
-        Log.d("color", "$colorList")
+//        Log.d("color", "$colors")
 //        view?.addSpan(CustomMultipleDotSpan(7f, Color.parseColor("303f9f")))
     }
 }
@@ -44,6 +39,7 @@ class EventDecorator(dates: Collection<CalendarDay>) : DayViewDecorator {
 class CustomMultipleDotSpan : LineBackgroundSpan {
     private val radius: Float
     private var color = IntArray(0)
+    private var dotColor = 0
 
     constructor() {
         this.radius = DEFAULT_RADIUS
@@ -62,6 +58,7 @@ class CustomMultipleDotSpan : LineBackgroundSpan {
         this.color = color
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun drawBackground(canvas: Canvas, paint: Paint, left: Int, right: Int,
                                 top: Int, baseline: Int, bottom: Int, text: CharSequence,
                                 start: Int, end: Int, lineNumber: Int) {
@@ -70,9 +67,15 @@ class CustomMultipleDotSpan : LineBackgroundSpan {
 
         for (i in 0 until total) {
             val oldColor = paint.color
+            if(color[i] != 0) {
+                paint.color = color[i]
+            }
             canvas.drawCircle(((left + right) / 2 - leftMost).toFloat(), bottom + radius, radius, paint)
             paint.color = oldColor
             leftMost += 24      //점과 점 사이 공간
         }
     }
+//    override fun callBackExample(msg: String) {
+//        if (msg == "RED") dotColor = color[0]
+//    }
 }

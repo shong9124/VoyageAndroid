@@ -49,6 +49,7 @@ var rv_adapter = MainRvAdapter(scheduleList)
 var scheduleId : String = ""
 var indexOfSchedule : Int = 0
 var monthOfDay : Int = 0
+var scheduleSize : Int = 0
 const val REQUEST_CODE = 200
 const val REQUEST_CODE_EDIT = 123
 
@@ -304,6 +305,7 @@ class MainActivity : AppCompatActivity() {
 
             val root = JSONObject(buf.toString())
             val jsonArray : JSONArray = root.optJSONArray("data")
+            scheduleSize = jsonArray.length()
             //api에서 data부분 내용을 가져옴
             var jsonObject : JSONObject
             //일정의 id를 가져 오는 함수
