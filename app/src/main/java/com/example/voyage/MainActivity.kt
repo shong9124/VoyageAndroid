@@ -48,6 +48,7 @@ var scheduleList = ArrayList<AddSchedule>()
 var rv_adapter = MainRvAdapter(scheduleList)
 var scheduleId : String = ""
 var indexOfSchedule : Int = 0
+var sizeOfSchedule : Int = 0
 var monthOfDay : Int = 0
 var scheduleSize : Int = 0
 const val REQUEST_CODE = 200
@@ -98,6 +99,10 @@ class MainActivity : AppCompatActivity() {
                 val sMonth : Int = date.month
                 val sDay : Int = date.day
                 val sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
+                //schedule size reset
+                if (s_day != sDate) {
+                    sizeOfSchedule = 0
+                }
                 s_day = sDate
 
                 //날짜 textView 에 담기
@@ -206,8 +211,11 @@ class MainActivity : AppCompatActivity() {
                             CallApiThread().start()
                             if (response.code() == 200) {
                                 //SharedPreferences
-                                App.prefs.setString(changeString(s_day), changeString(s_day))
+                                App.prefs.setString(changeString(s_day), "$sizeOfSchedule")
+                                Log.d("size", "$sizeOfSchedule")
                                 dotSchedule(s_day)
+                                //schedule size
+                                sizeOfSchedule += 1
                             }
                         }
                         override fun onFailure(call: Call<PostModel>, t: Throwable) {
@@ -305,7 +313,11 @@ class MainActivity : AppCompatActivity() {
 
             val root = JSONObject(buf.toString())
             val jsonArray : JSONArray = root.optJSONArray("data")
+
+            //count schedule
             scheduleSize = jsonArray.length()
+            sizeOfSchedule = scheduleSize
+
             //api에서 data부분 내용을 가져옴
             var jsonObject : JSONObject
             //일정의 id를 가져 오는 함수
@@ -360,7 +372,7 @@ class MainActivity : AppCompatActivity() {
                         catch (e: NullPointerException) {
                             Log.d("ERROR", "NullPointerException")
                         }
-                        getSchedule(stringToInt(s_day))
+//                        getSchedule(stringToInt(s_day))
                     }
                 }
             }

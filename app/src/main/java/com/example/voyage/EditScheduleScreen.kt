@@ -81,6 +81,8 @@ class EditScheduleScreen : AppCompatActivity(), CallBack {
                         Toast.makeText(this@EditScheduleScreen,
                             "schedule deleted", Toast.LENGTH_SHORT).show()
                         MainActivity().CallApiThread().start()
+                        //schedule size
+                        sizeOfSchedule -= 1
                     }
                     override fun onFailure(call: Call<Void>, t: Throwable) {
                         Log.d("DELETE", "delete: fail to delete")

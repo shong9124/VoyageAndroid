@@ -62,7 +62,7 @@ class CustomMultipleDotSpan : LineBackgroundSpan {
     override fun drawBackground(canvas: Canvas, paint: Paint, left: Int, right: Int,
                                 top: Int, baseline: Int, bottom: Int, text: CharSequence,
                                 start: Int, end: Int, lineNumber: Int) {
-        val total = if (color.size > 2) 3 else color.size
+        val total = if (sizeOfSchedule > 2) 3 else sizeOfSchedule
         var leftMost = (total - 1) * -12
 
         for (i in 0 until total) {
