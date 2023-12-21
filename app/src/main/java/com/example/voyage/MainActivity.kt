@@ -99,10 +99,6 @@ class MainActivity : AppCompatActivity() {
                 val sMonth : Int = date.month
                 val sDay : Int = date.day
                 val sDate = "$sYear-%02d-%02d".format(sMonth, sDay)
-                //schedule size reset
-                if (s_day != sDate) {
-                    sizeOfSchedule = 0
-                }
                 s_day = sDate
 
                 //날짜 textView 에 담기
@@ -210,12 +206,12 @@ class MainActivity : AppCompatActivity() {
                             Log.d("log", "post: " + response.body().toString())
                             CallApiThread().start()
                             if (response.code() == 200) {
+                                //schedule size
+                                sizeOfSchedule += 1
                                 //SharedPreferences
                                 App.prefs.setString(changeString(s_day), "$sizeOfSchedule")
                                 Log.d("size", "$sizeOfSchedule")
                                 dotSchedule(s_day)
-                                //schedule size
-                                sizeOfSchedule += 1
                             }
                         }
                         override fun onFailure(call: Call<PostModel>, t: Throwable) {
@@ -368,6 +364,7 @@ class MainActivity : AppCompatActivity() {
                             val calendarView : MaterialCalendarView = findViewById(R.id.calendarView)
                             calendarView.removeDecorators()
                             calendarView.invalidateDecorators()
+                            getSchedule(stringToInt(s_day))
                         }
                         catch (e: NullPointerException) {
                             Log.d("ERROR", "NullPointerException")

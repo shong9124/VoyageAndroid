@@ -62,18 +62,44 @@ class CustomMultipleDotSpan : LineBackgroundSpan {
     override fun drawBackground(canvas: Canvas, paint: Paint, left: Int, right: Int,
                                 top: Int, baseline: Int, bottom: Int, text: CharSequence,
                                 start: Int, end: Int, lineNumber: Int) {
-        val total = if (sizeOfSchedule > 2) 3 else sizeOfSchedule
+
+        val total = if (color.size > 2) 3 else color.size
         var leftMost = (total - 1) * -12
 
         for (i in 0 until total) {
             val oldColor = paint.color
-            if(color[i] != 0) {
+            if (color[i] != 0) {
                 paint.color = color[i]
             }
             canvas.drawCircle(((left + right) / 2 - leftMost).toFloat(), bottom + radius, radius, paint)
             paint.color = oldColor
             leftMost += 24      //점과 점 사이 공간
         }
+
+//        for (i in 0 until monthOfDay) {
+//            val calDay = MainActivity().stringToInt(s_day)
+//            val sYear: Int = calDay.date.year
+//            val sMonth: Int = calDay.month
+//            val sDay: Int = 1 + i
+//            val strDay = "$sYear$sMonth$sDay"
+//
+//            if (App.prefs.getString(strDay, "") != "") {
+//                val total = if (App.prefs.getString(strDay, "") == "1") 1
+//                else App.prefs.getString(strDay, "").toInt()
+//                Log.d("total", "$total")
+//                var leftMost = (total - 1) * -12
+//                //점찍기
+//                for (k in 0 until total) {
+//                    val oldColor = paint.color
+//                    if(color[k] != 0) {
+//                        paint.color = color[k]
+//                    }
+//                    canvas.drawCircle(((left + right) / 2 - leftMost).toFloat(), bottom + radius, radius, paint)
+//                    paint.color = oldColor
+//                    leftMost += 24      //점과 점 사이 공간
+//                }
+//            }
+//        }
     }
 //    override fun callBackExample(msg: String) {
 //        if (msg == "RED") dotColor = color[0]
