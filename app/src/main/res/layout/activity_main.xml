@@ -10,9 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toTopOf="@+id/btn_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="0dp">
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -25,14 +26,14 @@
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                app:mcv_selectionColor="@color/blue_200"
-                app:mcv_showOtherDates="all"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.491"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.105"
+                app:mcv_selectionColor="@color/blue_200"
+                app:mcv_showOtherDates="all"
                 tools:ignore="MissingConstraints" />
 
             <TextView
@@ -40,9 +41,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:layout_gravity="center"
+                android:layout_marginBottom="15dp"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.435"
                 app:layout_constraintStart_toStartOf="@id/calendarView"
@@ -55,8 +56,8 @@
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:stackFromBottom="true"
                 android:layout_marginBottom="30dp"
+                android:stackFromBottom="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.491"
@@ -70,6 +71,20 @@
 
     </ScrollView>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:itemBackground="@color/blue_200"
+        app:itemIconTint="@drawable/menu_clicked_color"
+        app:itemTextColor="@drawable/menu_clicked_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/navi_menu"
+        tools:ignore="MissingConstraints" />
+
     <Button
         android:id="@+id/btn_add"
         android:layout_width="60dp"
@@ -79,7 +94,7 @@
         android:textColor="@color/white"
         android:backgroundTint="@color/blue_200"
         android:background="@drawable/round_button"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.91"
         app:layout_constraintStart_toStartOf="parent" />

@@ -71,7 +71,8 @@ class CustomMultipleDotSpan : LineBackgroundSpan {
             if (color[i] != 0) {
                 paint.color = color[i]
             }
-            canvas.drawCircle(((left + right) / 2 - leftMost).toFloat(), bottom + radius, radius, paint)
+            canvas.drawCircle(((left + right) / 2 - leftMost).toFloat(),
+                bottom + radius, radius, paint)
             paint.color = oldColor
             leftMost += 24      //점과 점 사이 공간
         }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/personalCalendar"
+        android:title="home"
+        android:icon="@drawable/ic_home" />
+
+    <item
+        android:id="@+id/groupCalendar"
+        android:title="calendar"
+        android:icon="@drawable/icon_calendar" />
+
+    <item
+        android:id="@+id/chatRoom"
+        android:title="chat"
+        android:icon="@drawable/icon_chat" />
+
+    <item
+        android:id="@+id/myPage"
+        android:title="my page"
+        android:icon="@drawable/icon_my_page" />
+
+</menu>
