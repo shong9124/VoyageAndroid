@@ -16,8 +16,9 @@ class EventDecorator(dates: Collection<CalendarDay>) : DayViewDecorator {
     var dates: HashSet<CalendarDay> = HashSet(dates)
     private lateinit var colors : IntArray
     var colorList
-    = arrayListOf<Int>(R.color.red, R.color.orange, R.color.yellow_300, R.color.green_200,
-        R.color.green_700, R.color.blue_200, R.color.blue_700, R.color.brown, R.color.gray)
+    = arrayListOf<Int>(R.color.red)
+//        , R.color.orange, R.color.yellow_300, R.color.green_200,
+//        R.color.green_700, R.color.blue_200, R.color.blue_700, R.color.brown, R.color.gray)
 
     override fun shouldDecorate(day: CalendarDay?): Boolean {
         return dates.contains(day)

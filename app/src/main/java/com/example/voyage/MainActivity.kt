@@ -154,6 +154,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //sharedPref 삭제
     fun deletePref(day: String) {
         App.prefs.delete(changeString(day))
     }
@@ -166,6 +167,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("onLaunch", "onStart success")
     }
 
+    //화면 전환
     fun goToEditScheduleScreen() {
         val intent = Intent(this, EditScheduleScreen :: class.java)
         startActivityForResult(intent, REQUEST_CODE_EDIT)
@@ -178,7 +180,7 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when(requestCode) {
                 REQUEST_CODE -> {
-                    //받아온 editText 값들의 text 를 추출 해서 get 어쩌고에 다 넣어줌
+                    //받아온 editText 값들의 text 를 추출 해서 다 넣어줌
                     val getContent = data?.getStringExtra("content")
                     val getColor = data?.getStringExtra("color")
                     val getMemo = data?.getStringExtra("memo")
@@ -219,7 +221,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     })
                 }
-                //put으로 main화면에 돌아 왔을 때
+                //put으로 main화면에 돌아 왔을 때(일정을 수정할 때)
                 REQUEST_CODE_EDIT -> {
                     val getContent = data?.getStringExtra("content")
                     val getColor = data?.getStringExtra("color")
@@ -247,6 +249,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //월별로 날짜수 정해 주기
     fun getMonthOfDays(month: Int) {
         if (month == 1) monthOfDay = 31
         if (month == 2) monthOfDay = 28
@@ -262,6 +265,7 @@ class MainActivity : AppCompatActivity() {
         if (month == 12) monthOfDay = 31
     }
 
+    //string 으로 받은 값을 CalendarDay 로 변환
     fun stringToInt(str: String): CalendarDay {
         val stringYear = str.substring(0, 4)
         val intYear = stringYear.toInt()
@@ -273,6 +277,7 @@ class MainActivity : AppCompatActivity() {
         return CalendarDay.from(intYear, intMonth, intDay)
     }
 
+    //string 형식 변환 (yyyy-mm-dd -> yyyymmdd)
     fun changeString(str: String): String {
         val year = str.substring(0, 4)
         val month = str.substring(5, 7)
@@ -308,11 +313,7 @@ class MainActivity : AppCompatActivity() {
             } while (str != null)
 
             val root = JSONObject(buf.toString())
-            val jsonArray : JSONArray = root.optJSONArray("data")
-
-            //count schedule
-            scheduleSize = jsonArray.length()
-            sizeOfSchedule = scheduleSize
+            val jsonArray : JSONArray = root.optJSONArray("data") as JSONArray
 
             //api에서 data부분 내용을 가져옴
             var jsonObject : JSONObject
@@ -326,6 +327,10 @@ class MainActivity : AppCompatActivity() {
                     indexOfSchedule = 0
                 }
             }
+
+            //count schedule
+            scheduleSize = jsonArray.length()
+            sizeOfSchedule = scheduleSize
 
             Log.d(Companion.TAG, "root: $root")
             Log.d(Companion.TAG, "code: ${root.get("code")}")
